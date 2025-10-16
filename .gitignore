@@ -1,0 +1,10 @@
+# Documentation
+docs/
+
+# Compilation
+dist/
+
+# Node
+node_modules/
+
+# VsCode

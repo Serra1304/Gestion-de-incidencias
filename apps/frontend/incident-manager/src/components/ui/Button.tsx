@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { VARIANTS, Variant } from "@/components/ui/theme/variants";
+import { THEME, Theme } from "./theme/theme";
 
 /**
  * Props del componente Button.
@@ -11,7 +11,7 @@ import { VARIANTS, Variant } from "@/components/ui/theme/variants";
  */
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 	/** Variante visual del botón (define color y estilo base) */
-	variant?: Variant;
+	theme?: Theme;
 };
 
 /**
@@ -29,7 +29,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
  * ```
  */
 export default function Button({
-	variant = "standard",
+	theme = "standard",
 	className = "",
 	children,
 	...props
@@ -38,7 +38,7 @@ export default function Button({
 	return (
 		<button
 			className={`px-6 py-1 rounded-md font-semibold transition-colors 
-				${VARIANTS[variant].base} ${VARIANTS[variant].hover} ${VARIANTS[variant].text} ${className}`}
+				${THEME[theme].bg.button} ${THEME[theme].hover.base} ${THEME[theme].text.base} ${className}`}
 			{...props}
 		>
 			{children}

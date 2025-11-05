@@ -92,7 +92,7 @@ export default function LoginForm() {
             <button
                 type="button"
                 onClick={() => router.push("/forgot-password")}
-                className={`${THEME.standard.text.base} text-sm hover:underline text-center`}
+                className={`${THEME.standard.text.base} text-sm text-center hover:underline focus:underline focus:outline-none`}
             >
                 ¿Olvidaste tu contraseña?
             </button>

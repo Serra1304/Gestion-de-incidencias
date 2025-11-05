@@ -3,7 +3,7 @@ export type Theme = "standard" | "light" | "danger";
 export const THEME = {
     standard: {
         border: {
-            base: "border border-standard-border"
+            base: "border-standard-border"
         },
         bg: {
             base: "bg-standard-base",
@@ -14,7 +14,7 @@ export const THEME = {
             base: "hover:bg-standard-hover",
         },
         focus: {
-
+            base: "focus:outline-none focus:ring-2 focus:ring-standard-focus",
         },
         scroll: {
 
@@ -40,7 +40,7 @@ export const THEME = {
             base: "",
         },
         focus: {
-
+            base: "",
         },
         scroll: {
 
@@ -66,7 +66,7 @@ export const THEME = {
             base: "",
         },
         focus: {
-
+            base: "",
         },
         scroll: {
 

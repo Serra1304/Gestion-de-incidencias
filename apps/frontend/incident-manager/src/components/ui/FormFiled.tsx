@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { VARIANTS, Variant } from "@/components/ui/theme/variants"
+import clsx from "clsx";
+import { THEME, Theme } from "./theme/theme";
 
 /** Tipo de entradas de datos permitidas para el FormField */
 type textInputType = "text" | "password" | "email" | "number";
@@ -29,7 +30,7 @@ type FormFieldProps = {
 	disable?: boolean;
 
 	/** Variante visual del botón (define color y estilo base) */
-	variant?: Variant;
+	theme?: Theme;
 
 	/** Callback que se dispara cuando el valor del input cambia */
 	onChange?: (value: string) => void;
@@ -51,16 +52,16 @@ export default function FormField({
 	value,
 	placeholder,
 	disable = false,
-	variant = "standard",
+	theme = "standard",
 	onChange,
 	className = "",
 }: FormFieldProps) {
-
+	
 	return (
-		<div className={`w-55 flex flex-col gap-1 ${className}`}>
+		<div className={clsx("flex flex-col gap-1", !className?.includes("w-") && "w-55", className)}>
 
 			{/* Etiqueta */}
-			<label htmlFor={name} className={`${VARIANTS[variant].text} ml-1`}>
+			<label htmlFor={name} className={`${THEME[theme].text.base} ml-1`}>
 				{label}
 			</label>
 
@@ -73,9 +74,9 @@ export default function FormField({
 				placeholder={placeholder}
 				disabled={disable}
 				onChange={(e) => onChange?.(e.target.value)}
-				className={`${disable ? VARIANTS[variant].textDisable : VARIANTS[variant].text} 
-				rounded-form border ${VARIANTS[variant].border} ${VARIANTS[variant].bg}
-				${VARIANTS[variant].focus} focus:outline-none focus:ring-2 py-1 px-2`}
+				className={`${disable ? THEME[theme].text.field : THEME[theme].text.base} 
+				rounded-form border ${THEME[theme].border.base} ${THEME[theme].bg.field}
+				${THEME[theme].focus.base} py-1 px-2`}
 			/>
 		</div>
 	);

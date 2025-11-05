@@ -38,7 +38,7 @@ export default function Button({
 	return (
 		<button
 			className={`px-6 py-1 rounded-md font-semibold transition-colors 
-				${THEME[theme].bg.button} ${THEME[theme].hover.base} ${THEME[theme].text.base} ${className}`}
+				${THEME[theme].bg.button} ${THEME[theme].hover.base} ${THEME[theme].text.base} ${THEME[theme].focus.base} ${className}`}
 			{...props}
 		>
 			{children}

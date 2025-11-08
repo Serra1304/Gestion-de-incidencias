@@ -33,7 +33,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
-import { Variant, VARIANTS } from "./theme/variants";
+import { THEME, Theme } from "./theme/theme";
 
 /** 
  * Representa una opción seleccionable dentro del ComboBox. 
@@ -63,7 +63,7 @@ type ComboBoxProps = {
 	className?: string;
 
 	/** Variante visual que define el estilo del componente (`standard`, `light`, etc.). */
-	variant?: Variant;
+	theme?: Theme;
 };
 
 export default function ComboBox({
@@ -73,7 +73,7 @@ export default function ComboBox({
 	value,
 	onChange,
 	className = "",
-	variant = "standard",
+	theme = "standard",
 }: ComboBoxProps) {
 
 	const containerRef = useRef<HTMLDivElement | null>(null);				// Detectar clics fuera del componente
@@ -105,7 +105,7 @@ export default function ComboBox({
 	return (
 		<div ref={containerRef} className={`flex flex-col gap-1 ${className}`}>
 			{/* Etiqueta */}
-			<label htmlFor={name} className={`ml-1 ${VARIANTS[variant].text}`}>
+			<label htmlFor={name} className={`ml-1 ${THEME[theme].text.base}`}>
 				{label}
 			</label>
 
@@ -115,8 +115,8 @@ export default function ComboBox({
 					type="button"
 					onClick={() => setIsOpen((prev) => !prev)}
 					className={`w-55 flex justify-between items-center px-3 py-1 
-					rounded-lg border ${VARIANTS[variant].border} ${VARIANTS[variant].bg} ${VARIANTS[variant].text}
-					focus:outline-none focus:ring-2 ${VARIANTS[variant].focus}`}
+					rounded-lg border ${THEME[theme].border.base} ${THEME[theme].bg.field} ${THEME[theme].text.base}
+					focus:outline-none focus:ring-2 ${THEME[theme].focus.base}`}
 				>
 					<span>{selectedOption ? selectedOption.label : "Selecciona..."}</span>
 					<ChevronDownIcon
@@ -127,14 +127,14 @@ export default function ComboBox({
 
 				{/* Lista desplegable */}
 				{isOpen && (
-					<ul className={`absolute mt-1 w-full ${VARIANTS[variant].bg} 
-					rounded-lg border-2 ${VARIANTS[variant].border} shadow-lg z-10 max-h-60 overflow-auto`}>
+					<ul className={`absolute mt-1 w-full ${THEME[theme].bg.button} 
+					rounded-lg border-2 ${THEME[theme].border.base} shadow-lg z-10 max-h-60 overflow-auto`}>
 						{options.map((opt) => (
 							<li
 								key={opt.value}
 								onClick={() => handleSelect(opt)}
-								className={`px-4 py-2 cursor-pointer ${VARIANTS[variant].text} ${VARIANTS[variant].hover} 
-								${opt.value === value ? "font-bold" : ""}`}
+								className={`px-4 py-2 cursor-pointer ${THEME[theme].hover.base} 
+								${opt.value === value ? `${THEME.standard.text.focus} font-bold` : THEME[theme].text.base}`}
 							>
 								{opt.label}
 							</li>

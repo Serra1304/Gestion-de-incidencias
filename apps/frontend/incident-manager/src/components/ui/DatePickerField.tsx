@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { DayPicker } from "react-day-picker";
+import { Day, DayFlag, DayPicker, dayPickerContext } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
-import { VARIANTS } from "./theme/variants";
+import { THEME } from "./theme/theme";
 
 /**
  * Props para el componente DatePickerField.
@@ -70,10 +70,12 @@ export default function DatePickerField({
         };
     }, []);
 
+    const today = new Date().toDateString;
+
     return (
         <div ref={containerRef} className={`flex flex-col gap-1 ${className}`}>
             {/* Etiqueta del campo */}
-            <label htmlFor={name} className={`ml-1 ${VARIANTS.standard.text}`}>
+            <label htmlFor={name} className={`ml-1 ${THEME.standard.text.base}`}>
                 {label}
             </label>
 
@@ -82,18 +84,18 @@ export default function DatePickerField({
                 <button
                     type="button"
                     onClick={() => setIsOpen((prev) => !prev)}
-                    className={`w-55 flex justify-between items-center px-3 py-1 ${VARIANTS.standard.text}
-                        rounded-lg border ${VARIANTS.standard.border} ${VARIANTS.standard.bg} 
-                        focus:outline-none focus:ring-2 ${VARIANTS.standard.focus}`}
+                    className={`w-55 flex justify-between items-center px-3 py-1 ${THEME.standard.text.base}
+                        rounded-lg border ${THEME.standard.border.base} ${THEME.standard.bg.field} 
+                        focus:outline-none focus:ring-2 ${THEME.standard.focus.base}`}
                 >
                     <span>{formattedValue}</span>
-                    <CalendarDaysIcon className={`h-5 w-5 ${VARIANTS.standard.text}`} />
+                    <CalendarDaysIcon className={`h-5 w-5 ${THEME.standard.text.base}`} />
                 </button>
 
                 {/* Calendario */}
                 {isOpen && (
-                    <div className={`absolute mt-1 ${VARIANTS.standard.bg} 
-                        border ${VARIANTS.standard.border} rounded-lg shadow-lg z-20 p-3`}
+                    <div className={`absolute mt-1 ${THEME.standard.bg.button} 
+                        border ${THEME.standard.border.base} rounded-lg shadow-lg z-20 p-3`}
                     >
                         <DayPicker
                             mode="single"
@@ -106,11 +108,25 @@ export default function DatePickerField({
                             }}
                             classNames={{
                                 chevron: "fill-white",
-                                day: `${VARIANTS.standard.hover} ${VARIANTS.standard.text} w-80 h-10`,
-                                caption_label: `${VARIANTS.standard.text}`,
-                                today: `font-bold ${VARIANTS.standard.textFocus}`,
-                                weekday: `${VARIANTS.standard.textFocus}`,
-                                selected: `${VARIANTS.standard.base} text-white`
+                                day: `${THEME.standard.hover.base} w-80 h-10`,
+                                caption_label: `${THEME.standard.text.base}`,
+                                today: `${THEME.standard.text.focus} font-bold`,
+                                weekday: `${THEME.standard.text.focus}`,
+                                selected: `${THEME.standard.bg.base} text-white`,
+                            }}
+
+                            components={{
+                                Day: (props) => {
+                                    const isToday = props.day.date.toDateString() === new Date().toDateString();
+
+                                    return (
+                                        <Day
+                                            {...props}
+                                            className={`${props.className} ${!isToday ? THEME.standard.text.base : ""
+                                                }`}
+                                        />
+                                    );
+                                },
                             }}
                         />
                     </div>

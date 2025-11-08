@@ -9,20 +9,22 @@ export const THEME = {
             base: "bg-standard-base",
             field: "bg-standard-field",
             button: "bg-standard-border",
+            calendar: "bg-standard-border"
         },
         hover: {
-            base: "hover:bg-standard-hover",
+            base: "hover:bg-standard-hover hover:text-standard-text",
         },
         focus: {
             base: "focus:outline-none focus:ring-2 focus:ring-standard-focus",
         },
         scroll: {
-
+            base: "scrollbar-thumb-standard-scroll",
         },
         text: {
             base: "text-standard-text",
             field: "text-standard-field",
-
+            focus: "text-standard-focus",
+            disble: "text-standard-disable",
         },
     },
 
@@ -34,7 +36,7 @@ export const THEME = {
             base: "bg-danger-base",
             field: "",
             button: "",
-
+            calendar: ""
         },
         hover: {
             base: "",
@@ -43,12 +45,13 @@ export const THEME = {
             base: "",
         },
         scroll: {
-
+            base: "",
         },
         text: {
             base: "text-danger-text",
             field: "",
-
+            focus: "",
+            disble: "",
         },
     },
 
@@ -60,7 +63,7 @@ export const THEME = {
             base: "",
             field: "",
             button: "",
-
+            calendar: ""
         },
         hover: {
             base: "",
@@ -69,12 +72,13 @@ export const THEME = {
             base: "",
         },
         scroll: {
-
+            base: "",
         },
         text: {
             base: "",
             field: "",
-
+            focus: "",
+            disble: "",
         },
     }
 };

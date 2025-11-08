@@ -1,6 +1,6 @@
 "use client";
 
-import { VARIANTS, Variant } from "@/components/ui/theme/variants"
+import { THEME, Theme } from "./theme/theme";
 
 /**
  * Props para el componente TextAreaField.
@@ -22,7 +22,7 @@ type TextAreaFieldProps = {
 	disable?: boolean;
 
 	/** Variante visual del botón (define color y estilo base) */
-	variant?: Variant;
+	theme?: Theme;
 
 	/** Callback que se dispara cuando el valor del textarea cambia */
 	onChange?: (value: string) => void;
@@ -47,7 +47,7 @@ export default function TextAreaField({
 	value,
 	placeholder,
 	disable,
-	variant = "standard",
+	theme = "standard",
 	onChange,
 	className = "",
 	rows = 4,
@@ -57,7 +57,7 @@ export default function TextAreaField({
 		<div className={`flex flex-col gap-1 ${className}`}>
 
 			{/* Etiqueta */}
-			<label htmlFor={name} className={`${VARIANTS[variant].text} ml-1`}>
+			<label htmlFor={name} className={`${THEME[theme].text.base} ml-1`}>
 				{label}
 			</label>
 
@@ -69,10 +69,10 @@ export default function TextAreaField({
 				value={value}
 				placeholder={placeholder}
 				onChange={(e) => onChange?.(e.target.value)}
-				className={`${disable ? VARIANTS[variant].textDisable : VARIANTS[variant].text}
-				border rounded-form ${VARIANTS[variant].border} ${VARIANTS[variant].bg}
-				${VARIANTS[variant].focus} focus:outline-none focus:ring-2
-        		scrollbar scrollbar-track-white/00 ${VARIANTS[variant].scroll} resize-none py-1 px-2`}
+				className={`flex-1 ${disable ? THEME[theme].text.disble : THEME[theme].text.base}
+				border rounded-form ${THEME[theme].border.base} ${THEME[theme].bg.field}
+				${THEME[theme].focus.base} focus:outline-none focus:ring-2
+        		scrollbar scrollbar-track-white/00 ${THEME[theme].scroll.base} resize-none py-1 px-2`}
 			/>
 		</div>
 	);

@@ -6,11 +6,13 @@ import IncidentTable from "@/modules/incident/components/IncidentsTable";
 import Button from "@/components/ui/Button";
 import { THEME } from "@/components/ui/theme/theme";
 import type { Incident } from "@/modules/incident/type/incident";
+import { useRouter } from "next/navigation";
 
 export default function IncidentsPage() {
   const [incidents, setIncidents] = useState<Incident[]>([]);
   const [filtered, setFiltered] = useState<Incident[]>([]);
   const [query, setQuery] = useState("");
+  const route = useRouter();
 
   useEffect(() => {
     (async () => {
@@ -42,7 +44,7 @@ export default function IncidentsPage() {
           <Button>Ver</Button>
           <Button>Editar</Button>
           <Button>Cerrar incidencia</Button>
-          <Button>Abrir incidencia</Button>
+          <Button onClick={() => route.push("/incidents/new")}>Abrir incidencia</Button>
         </div>
       </header>
 

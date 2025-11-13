@@ -7,4 +7,13 @@ dist/
 # Node
 node_modules/
 
-# VsCode
+# Intellij
+.idea
+*.iws
+*.iml
+*.ipr
+
+# Docker
+.env
+mariadb_data/
+*.log

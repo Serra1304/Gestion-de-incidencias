@@ -3,41 +3,33 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import FormField from "@/components/ui/FormFiled";
-import { login } from "@/modules/auth/services/authService";
 import Button from "@/components/ui/Button";
 import { THEME } from "@/components/ui/theme/theme";
+import { loginAction } from "../actions/loginAction";
 
 export default function LoginForm() {
     const router = useRouter();
 
-    // Estado de los campos
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [code2FA, setCode2FA] = useState("");
 
-    // Estado de carga y error
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Manejo del envío del formulario
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
-        try {
-            const success = await login({ username, password, code2FA });
+        const result = await loginAction(username, password);
 
-            if (success) {
-                router.push("/incidents/list");
-            } else {
-                setError("Credenciales o código 2FA incorrectos.");
-            }
-        } catch (err) {
-            setError("Error al conectar con el servidor.");
-        } finally {
-            setLoading(false);
+        if (result.success) {
+            router.push("/incidents/list");
+        } else {
+            setError("Credenciales incorrectas.");
         }
+
+        setLoading(false);
     };
 
     return (
@@ -65,14 +57,14 @@ export default function LoginForm() {
                 className="w-full"
             />
 
-            <FormField
+{/*             <FormField
                 label="Código 2FA"
                 name="code2FA"
                 value={code2FA}
                 onChange={setCode2FA}
                 placeholder="2FA"
                 className="w-full"
-            />
+            /> */}
 
             {error && (
                 <p className={`text-sm text-center rounded p-2 ${THEME.danger.text.base} ${THEME.danger.bg.base} ${THEME.danger.border.base}`}>
@@ -99,3 +91,4 @@ export default function LoginForm() {
         </form>
     );
 }
+

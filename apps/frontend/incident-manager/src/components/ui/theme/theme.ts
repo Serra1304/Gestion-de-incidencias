@@ -3,13 +3,14 @@ export type Theme = "standard" | "light" | "danger";
 export const THEME = {
     standard: {
         border: {
-            base: "border-standard-border"
+            base: "border-standard-border",
+            second: "border-standard-text",
         },
         bg: {
             base: "bg-standard-base",
             field: "bg-standard-field",
             button: "bg-standard-border",
-            calendar: "bg-standard-border"
+            calendar: "bg-standard-border",
         },
         hover: {
             base: "hover:bg-standard-hover hover:text-standard-text",
@@ -31,6 +32,7 @@ export const THEME = {
     danger: {
         border: {
             base: "border border-danger-border",
+            second: ""
         },
         bg: {
             base: "bg-danger-base",
@@ -39,7 +41,7 @@ export const THEME = {
             calendar: ""
         },
         hover: {
-            base: "",
+            base: "hover:bg-danger-base hover:text-danger-text",
         },
         focus: {
             base: "",
@@ -58,6 +60,7 @@ export const THEME = {
     light: {
         border: {
             base: "",
+            second: ""
         },
         bg: {
             base: "",

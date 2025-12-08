@@ -11,22 +11,15 @@
 	--color-standard-field: oklch(0.4852 0.0345 168.35);
 	--color-standard-border: oklch(50.8% 0.118 165.612);		/* emerald-700 */
 	--color-standard-hover: oklch(69.6% 0.17 162.48);			/* emerald-500 */
+	--color-standard-focus: oklch(69.6% 0.17 162.48);			/* emerald-500 */
+	--color-standard-disable: oklch(70.7% 0.022 261.325);		/* gray-400 */
 	--color-standard-text: #fff;								/* white */
+	--color-standard-scroll: oklch(26.2% 0.051 172.552);		/* emerald-950 */
 
 
 	--color-danger-base: oklch(25.8% 0.092 26.042);				/* red-950 */
 	--color-danger-border: oklch(50.5% 0.213 27.518);			/* red-700 */
 	--color-danger-text: #fff;									/* white */
-
-
-	/*--color-standard-base: oklch(50.8% 0.118 165.612);			/* emerald-700 */
-	--color-standard-bg: oklch(0.4852 0.0345 168.35);
-	--color-standard-hover: oklch(69.6% 0.17 162.48);			/* emerald-500 */
-	--color-standard-focus: oklch(69.6% 0.17 162.48);			/* emerald-500 */
-	--color-standard-scroll: oklch(26.2% 0.051 172.552);		/* emerald-950 */
-	/*--color-standard-text: #fff;								/* white */
-	--color-standard-text-disable: oklch(70.7% 0.022 261.325);	/* gray-400 */
-	--color-standard-text-focus: oklch(69.6% 0.17 162.48);		/* emerald-500 */
 
 	--color-light: oklch(70.7% 0.022 261.325);					/* gray-400 */
 	--color-light-hover: oklch(92.8% 0.006 264.531);			/* gray-200 */
@@ -34,7 +27,6 @@
 
 	--color-danger: oklch(57.7% 0.245 27.325);					/* red-600 */
 	--color-danger-hover: oklch(70.4% 0.191 22.216);			/* red-400 */
-	/*--color-danger-text: #fff;									/* white */
 
 	--color-darkemerald: #021711;
 	--color-border-color: oklch(50.8% 0.118 165.612);			/* emerald-700 */
@@ -42,8 +34,8 @@
 	--color-bg-form: oklch(0.4852 0.0345 168.35);
 	--color-scroll-color: oklch(26.2% 0.051 172.552);			/* emerald-950 */
 
-	--color-text-primary: oklch(100% 0 0);						/* white */
-	--color-text-secundary: oklch(70.7% 0.022 261.325);			/* gray-400 */
+	/*--color-text-primary: oklch(100% 0 0);						/* white */
+	/*--color-text-secundary: oklch(70.7% 0.022 261.325);			/* gray-400 */
 
 	/* Border */
 	--radius-form: 0.5rem;
@@ -52,13 +44,6 @@
 
 }
 
-.item {
-	@apply text-white border border-emerald-700 bg-emerald-50/30 hover:bg-emerald-600 rounded-lg
-}
-
-.item-select {
-	@apply text-white border border-emerald-700 bg-emerald-800 rounded-lg
-}
 
 .button {
 	@apply bg-emerald-900 hover:bg-emerald-700 text-white py-3 rounded-lg font-medium transition-colors

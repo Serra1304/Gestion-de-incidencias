@@ -74,7 +74,7 @@ export default function FormField({
 				placeholder={placeholder}
 				disabled={disable}
 				onChange={(e) => onChange?.(e.target.value)}
-				className={`${disable ? THEME[theme].text.field : THEME[theme].text.base} 
+				className={`${disable ? THEME[theme].text.disble : THEME[theme].text.base} 
 				rounded-form border ${THEME[theme].border.base} ${THEME[theme].bg.field}
 				${THEME[theme].focus.base} py-1 px-2`}
 			/>

@@ -1,0 +1,46 @@
+package com.incident_manager.mapper;
+
+import com.incident_manager.DTO.UserInfoDTO;
+import com.incident_manager.DTO.workGroup.WorkGroupDTO;
+import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
+import com.incident_manager.entity.WorkGroup;
+import com.incident_manager.service.data.WorkGroupFullData;
+
+import java.util.stream.Collectors;
+
+public class WorkGroupMapper {
+
+    public WorkGroupDTO toDTO(WorkGroup group) {
+        return new WorkGroupDTO(
+                group.getId(),
+                group.getName(),
+                group.getDescription(),
+                group.getActive()
+        );
+    }
+
+    public WorkGroupFullDTO toFullGroupDTO(WorkGroupFullData groupFullData) {
+        return new WorkGroupFullDTO(
+                groupFullData.group().getId(),
+                groupFullData.group().getName(),
+                groupFullData.group().getDescription(),
+                groupFullData.group().getActive(),
+                groupFullData.groupUsers()
+                        .stream()
+                        .map(user -> new UserInfoDTO(
+                                user.getId(),
+                                user.getProfile().getName(),
+                                user.getProfile().getLastName(),
+                                user.getProfile().getSecondLastName()))
+                        .collect(Collectors.toList()),
+                groupFullData.availableUsers()
+                        .stream()
+                        .map(user -> new UserInfoDTO(
+                                user.getId(),
+                                user.getProfile().getName(),
+                                user.getProfile().getLastName(),
+                                user.getProfile().getSecondLastName()))
+                        .collect(Collectors.toList())
+        );
+    }
+}

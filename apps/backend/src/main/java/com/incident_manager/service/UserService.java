@@ -31,6 +31,7 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return new UserInfoDTO(
+                user.getId(),
                 user.getName(),
                 user.getLastName(),
                 user.getSecondLastName());

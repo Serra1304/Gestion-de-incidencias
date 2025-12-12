@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -38,6 +40,8 @@ public class AuthUser {
     @OneToOne(mappedBy = "authUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile profile;
 
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<WorkGroup> groups = new HashSet<>();
 }
 
 

@@ -48,7 +48,7 @@ public class SecurityConfig {
         );
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/login", "/auth/register", "/auth/refresh").permitAll()
+                .requestMatchers("/api/auth/login", "/api/groups", "/api/groups/**").permitAll()
                 .anyRequest().authenticated()
         );
 

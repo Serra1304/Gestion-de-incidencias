@@ -5,9 +5,11 @@ import com.incident_manager.DTO.workGroup.WorkGroupDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
 import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.service.data.WorkGroupFullData;
+import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
+@Component
 public class WorkGroupMapper {
 
     public WorkGroupDTO toDTO(WorkGroup group) {

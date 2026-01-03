@@ -1,7 +1,6 @@
 package com.incident_manager.service;
 
 import com.incident_manager.DTO.workGroup.WorkGroupCreateDTO;
-import com.incident_manager.DTO.workGroup.WorkGroupUpdateDTO;
 import com.incident_manager.Exeption.BadRequestException;
 import com.incident_manager.Exeption.ConflictException;
 import com.incident_manager.Exeption.ResourceNotFoundException;
@@ -10,10 +9,12 @@ import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.repository.AuthUserRepository;
 import com.incident_manager.repository.WorkGroupRepository;
 
+import com.incident_manager.service.command.UpdateWorkGroupCommand;
 import com.incident_manager.service.data.WorkGroupFullData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,16 +40,34 @@ public class WorkGroupService {
         return groupRepository.save(group);
     }
 
-    public WorkGroup updateGroup(UUID id, WorkGroupUpdateDTO dto) {
-        WorkGroup group = groupRepository.findById(id)
+    public WorkGroupFullData updateGroup(UpdateWorkGroupCommand cmd) {
+        WorkGroup group = groupRepository.findById(cmd.groupId())
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        if (dto.name() != null) group.setName(dto.name());
-        if (dto.description() != null) group.setDescription(dto.description());
-        if (dto.active() != null) group.setActive(dto.active());
+        // Datos básicos
+        if (cmd.name() != null) group.setName(cmd.name());
+        if (cmd.description() != null) group.setDescription(cmd.description());
+        if (cmd.active() != null) group.setActive(cmd.active());
 
-        group.setUpdatedAt(java.time.LocalDateTime.now());
-        return groupRepository.save(group);
+        // Usuarios del grupo
+        if (cmd.userIds() != null) {
+            Set<AuthUser> users = new HashSet<>(
+                    userRepository.findAllById(cmd.userIds())
+            );
+            group.setUsers(users);
+        }
+
+        group.setUpdatedAt(LocalDateTime.now());
+        groupRepository.save(group);
+
+        // Usuarios disponibles
+        Set<AuthUser> groupUsers = group.getUsers();
+        List<AuthUser> availableUsers = userRepository.findAll()
+                .stream()
+                .filter(u -> !groupUsers.contains(u))
+                .toList();
+
+        return new WorkGroupFullData(group, groupUsers, availableUsers);
     }
 
     public void deleteGroup(UUID id) {

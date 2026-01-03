@@ -1,6 +1,6 @@
 package com.incident_manager.controller;
 
-import com.incident_manager.DTO.*;
+import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.DTO.workGroup.*;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.WorkGroup;
@@ -8,6 +8,8 @@ import com.incident_manager.mapper.UserMapper;
 import com.incident_manager.mapper.WorkGroupMapper;
 import com.incident_manager.service.WorkGroupService;
 
+import com.incident_manager.service.command.UpdateWorkGroupCommand;
+import com.incident_manager.service.data.WorkGroupFullData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,10 +37,19 @@ public class WorkGroupController {
 
     // Update group
     @PutMapping("/{groupId}")
-    public ResponseEntity<WorkGroupDTO> update(@PathVariable UUID groupId, @RequestBody WorkGroupUpdateDTO dto) {
-        WorkGroup updated = service.updateGroup(groupId, dto);
+    public ResponseEntity<WorkGroupFullDTO> updateGroup(@PathVariable UUID groupId, @RequestBody WorkGroupSaveDTO dto
+    ) {
+        UpdateWorkGroupCommand cmd = new UpdateWorkGroupCommand(
+                groupId,
+                dto.name(),
+                dto.description(),
+                dto.active(),
+                dto.userIds()
+        );
 
-        return ResponseEntity.ok(groupMapper.toDTO(updated));
+        WorkGroupFullData result = service.updateGroup(cmd);
+
+        return ResponseEntity.ok(groupMapper.toFullGroupDTO(result));
     }
 
     // Delete group

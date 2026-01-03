@@ -1,6 +1,6 @@
 package com.incident_manager.mapper;
 
-import com.incident_manager.DTO.UserInfoDTO;
+import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
 import com.incident_manager.entity.WorkGroup;

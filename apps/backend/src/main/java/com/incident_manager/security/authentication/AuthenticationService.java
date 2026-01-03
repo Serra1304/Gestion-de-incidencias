@@ -2,7 +2,7 @@ package com.incident_manager.security.authentication;
 
 import com.incident_manager.DTO.AuthResponseDTO;
 import com.incident_manager.DTO.UserAuthDTO;
-import com.incident_manager.DTO.UserInfoDTO;
+import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.InvalidToken;
 import com.incident_manager.repository.AuthUserRepository;

@@ -1,10 +1,11 @@
 package com.incident_manager.service;
 
-import com.incident_manager.DTO.UserInfoDTO;
+import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.repository.UserProfileRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,16 +17,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-//    public UserInfoDTO getUserInfoByEmail(String email) {
-//        UserProfile user = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-//
-//        return new UserInfoDTO(
-//                user.getName(),
-//                user.getLastName(),
-//                user.getSecondLastName());
-//    }
-
     public UserInfoDTO getUserByAuthUserId(UUID id) {
         UserProfile user = userRepository.findByAuthUserId(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -35,5 +26,10 @@ public class UserService {
                 user.getName(),
                 user.getLastName(),
                 user.getSecondLastName());
+    }
+
+    // Find all users
+    public List<UserProfile> getUsers() {
+        return userRepository.findAll();
     }
 }

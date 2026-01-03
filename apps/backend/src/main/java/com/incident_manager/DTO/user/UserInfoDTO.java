@@ -1,4 +1,4 @@
-package com.incident_manager.DTO;
+package com.incident_manager.DTO.user;
 
 import java.util.UUID;
 

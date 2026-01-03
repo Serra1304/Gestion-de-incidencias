@@ -1,6 +1,7 @@
 import type { GroupFull } from "@/modules/workGroup/type/groupFull";
 import type { GroupListItem } from "@/modules/workGroup/type/groupListItem";
 import type { UserInfo } from "@/modules/user/type/userInfo";
+import { GroupSave } from "@/modules/workGroup/type/groupSave";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
@@ -49,9 +50,9 @@ export function fetchFullGroup(groupId: string): Promise<GroupFull> {
 
 /** Crear grupo */
 export function createGroup(
-  payload: Pick<GroupListItem, "name" | "description" | "active">
-): Promise<GroupListItem> {
-  return apiRequest<GroupListItem>("/groups", {
+  payload: GroupSave
+): Promise<GroupFull> {
+  return apiRequest("/groups", {
     method: "POST",
     body: JSON.stringify(payload),
   });
@@ -60,9 +61,9 @@ export function createGroup(
 /** Actualizar grupo */
 export function updateGroup(
   groupId: string,
-  payload: Partial<Pick<GroupListItem, "name" | "description" | "active">>
-): Promise<GroupListItem> {
-  return apiRequest<GroupListItem>(`/groups/${groupId}`, {
+  payload: GroupSave
+): Promise<GroupFull> {
+  return apiRequest(`/groups/${groupId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
   });

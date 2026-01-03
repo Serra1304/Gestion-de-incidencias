@@ -4,19 +4,20 @@ import React, { useEffect, useState, createContext } from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import clsx from "clsx";
-import { fetchFullGroup } from "@/data/workGroup.api";
+import { createGroup, fetchFullGroup, updateGroup } from "@/data/workGroup.api";
 import { GroupFull } from "@/modules/workGroup/type/groupFull"
 import Button from "@/components/ui/Button";
+import { fetchAllUsers } from "@/data/user.api";
 
 export const GroupContext = createContext<{
   group: GroupFull | null;
-  setGroup: (r: GroupFull) => void;
+  updateGroup: (patch: Partial<GroupFull>) => void;
   refreshGroup: () => Promise<void>;
   loading: boolean;
 }>({
   group: null,
-  setGroup: () => { },
-  refreshGroup: async () => { },
+  updateGroup: () => {},
+  refreshGroup: async () => {},
   loading: true,
 });
 
@@ -37,24 +38,93 @@ export default function GroupRightLayout({ children }: { children: React.ReactNo
   const [group, setGroups] = useState<GroupFull | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
+  const [isNewGroup, setIsNewGroup] = useState<boolean>(false);
 
-  async function loadgroup() {
-    if (!groupId) return;
-    setLoading(true);
-    const r = await fetchFullGroup(groupId);
-    setGroups(r);
-    setLoading(false);
-  }
+async function loadgroup() {
+  if (!groupId) return;
+  setLoading(true);
+
+  const r = await fetchFullGroup(groupId);
+
+  setGroups({
+    ...r,
+    users: r.users ?? [],
+    availableUsers: r.availableUsers ?? [],
+  });
+
+  setLoading(false);
+}
 
   useEffect(() => {
     loadgroup();
   }, [groupId]);
 
-  const handleNew = () => console.log("Nuevo grupo");
-  const handleSave = () => {
-    console.log("Guardar grupo");
-    setHasUnsavedChanges(false);
+  // 🆕 Nuevo grupo
+  const handleNew = async () => {
+    const emptyGroup: GroupFull = {
+      id: "",
+      name: "",
+      description: "",
+      active: true,
+      users: [],
+      availableUsers: await fetchAllUsers(),
+    };
+
+    setGroups(emptyGroup);
+    setHasUnsavedChanges(true);
+    setIsNewGroup(true);
   };
+
+const handleSave = async () => {
+  if (!group) return;
+
+  try {
+    setLoading(true);
+
+    const payload = {
+      name: group.name,
+      description: group.description,
+      active: group.active,
+      userIds: group.users.map(u => u.id),
+    };
+
+    if (isNewGroup || !group.id) {
+      await createGroup(payload);
+      setIsNewGroup(false);
+    } else {
+      await updateGroup(group.id, payload);
+    }
+
+    await loadgroup(); 
+    setHasUnsavedChanges(false);
+
+  } catch (error) {
+    console.error("Error al guardar el grupo", error);
+    alert("Error al guardar el grupo");
+  } finally {
+    setLoading(false);
+  }
+};
+
+const handleGroupChange = (patch: Partial<GroupFull>) => {
+  setGroups(prev => {
+    if (!prev) return prev;
+
+    return {
+      ...prev,
+      ...patch,
+      users: Array.isArray(patch.users)
+        ? patch.users
+        : prev.users ?? [],
+      availableUsers: Array.isArray(patch.availableUsers)
+        ? patch.availableUsers
+        : prev.availableUsers ?? [],
+    };
+  });
+
+  setHasUnsavedChanges(true);
+};
+
   const handleDelete = () => {
     if (group && confirm(`¿Eliminar el grupo "${group.name}"?`)) {
       console.log("Eliminar grupo", group.id);
@@ -72,7 +142,7 @@ export default function GroupRightLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <GroupContext.Provider value={{ group: group, setGroup: setGroups, refreshGroup: loadgroup, loading }}>
+    <GroupContext.Provider value={{ group, updateGroup: handleGroupChange, refreshGroup: loadgroup, loading, }}>
       <UnsavedContext.Provider value={{ setHasUnsavedChanges }}>
         <div className="flex flex-col h-full">
           {/* Encabezado */}

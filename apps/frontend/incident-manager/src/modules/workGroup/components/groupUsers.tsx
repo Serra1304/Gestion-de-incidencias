@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import SelectableList from "@/components/ui/SelectTableList";
 import IconButton from "@/components/ui/IconButton";
 import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
-import { GroupContext, UnsavedContext } from "@/app/(dashboard)/groups/[groupId]/layout";
+import { GroupContext } from "@/app/(dashboard)/groups/[groupId]/layout";
 import { UserInfo } from "@/modules/user/type/userInfo";
 
 interface SelectableUser {
@@ -20,20 +20,10 @@ function toSelectableUser(u: UserInfo): SelectableUser {
 }
 
 export default function GroupUsers() {
-  const { group } = useContext(GroupContext);
-  const { setHasUnsavedChanges } = useContext(UnsavedContext);
-
-  const [groupUsers, setGroupUsers] = useState<SelectableUser[]>([]);
-  const [availableUsers, setAvailableUsers] = useState<SelectableUser[]>([]);
+  const { group, updateGroup } = useContext(GroupContext);
+  const groupUsers = (group?.users ?? []).map(toSelectableUser);
+  const availableUsers = (group?.availableUsers ?? []).map(toSelectableUser);
   const [selected, setSelected] = useState<string[]>([]);
-
-  // 🔄 Cargar usuarios cuando cambie el grupo
-useEffect(() => {
-  if (!group) return;
-
-  setGroupUsers((group.users ?? []).map(toSelectableUser));
-  setAvailableUsers((group.availableUsers ?? []).map(toSelectableUser));
-}, [group]);
 
   const toggleUser = (id: string) => {
     setSelected((prev) =>
@@ -45,24 +35,30 @@ useEffect(() => {
 
   // 👉 Añadir usuarios al grupo
   const addToGroup = () => {
-    const toAdd = availableUsers.filter((u) => selected.includes(u.id));
+    if (!group) return;
 
-    setGroupUsers((prev) => [...prev, ...toAdd]);
-    setAvailableUsers((prev) => prev.filter((u) => !selected.includes(u.id)));
+    const toAdd = group.availableUsers.filter(u => selected.includes(u.id));
+
+    updateGroup({
+      users: [...group.users, ...toAdd],
+      availableUsers: group.availableUsers.filter(u => !selected.includes(u.id)),
+    });
 
     setSelected([]);
-    setHasUnsavedChanges(true); // avisamos al layout de cambios
   };
 
   // 👉 Quitar usuarios del grupo
   const removeFromGroup = () => {
-    const toRemove = groupUsers.filter((u) => selected.includes(u.id));
+    if (!group) return;
 
-    setAvailableUsers((prev) => [...prev, ...toRemove]);
-    setGroupUsers((prev) => prev.filter((u) => !selected.includes(u.id)));
+    const toRemove = group.users.filter(u => selected.includes(u.id));
+
+    updateGroup({
+      users: group.users.filter(u => !selected.includes(u.id)),
+      availableUsers: [...group.availableUsers, ...toRemove],
+    });
 
     setSelected([]);
-    setHasUnsavedChanges(true);
   };
 
   return (

@@ -68,3 +68,16 @@ SELECT
     '7095'
 FROM auth_user
 WHERE email = 'user@example.com';
+
+
+-- ================================
+--   INSERT WORK GROUP
+-- ================================
+
+INSERT INTO work_group (id, name, description, active)
+VALUES
+    (UUID(), 'Electricidad', 'Equipo encargado de incidencias eléctricas', TRUE),
+    (UUID(), 'Mantenimiento General', 'Equipo de mantenimiento general del edificio', TRUE),
+    (UUID(), 'Soporte TI', 'Grupo encargado del soporte de sistemas', TRUE),
+    (UUID(), 'Climatización', 'Equipo especializado en aire acondicionado y HVAC', TRUE);
+

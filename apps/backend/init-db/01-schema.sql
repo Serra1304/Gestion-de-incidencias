@@ -35,3 +35,21 @@ CREATE TABLE IF NOT EXISTS invalid_token (
     user_id UUID NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Tabla para grupos de trabajo
+CREATE TABLE IF NOT EXISTS work_group (
+    id UUID PRIMARY KEY DEFAULT UUID(),
+    name VARCHAR(100) NOT NULL UNIQUE,
+    description TEXT,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla intermedia grupos de trabajo / usuarios
+CREATE TABLE IF NOT EXISTS work_group_user (
+    group_id UUID NOT NULL REFERENCES work_group(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth_user(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (group_id, user_id)
+);

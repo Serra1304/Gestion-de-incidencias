@@ -18,7 +18,7 @@ public class UserProfile {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne
+    @OneToOne(optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private AuthUser authUser;
 

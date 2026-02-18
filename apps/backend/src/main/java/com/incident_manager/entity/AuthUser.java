@@ -40,7 +40,12 @@ public class AuthUser {
     @OneToOne(mappedBy = "authUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserProfile profile;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    @ManyToMany
+    @JoinTable(
+            name = "work_group_user",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
     private Set<WorkGroup> groups = new HashSet<>();
 }
 

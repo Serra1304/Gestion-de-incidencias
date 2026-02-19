@@ -1,7 +1,7 @@
 package com.incident_manager.controller;
 
 import com.incident_manager.DTO.user.UserCreateDTO;
-import com.incident_manager.DTO.user.UserDTO;
+import com.incident_manager.DTO.user.UserResponseDTO;
 import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.DTO.user.UserSaveDTO;
 import com.incident_manager.entity.UserProfile;
@@ -10,10 +10,15 @@ import com.incident_manager.service.UserService;
 import com.incident_manager.service.command.UpdateUserCommand;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,18 +39,44 @@ public class UserController {
 
     @Operation(
             summary = "Create new user",
-            description = "Create a new user in the system"
+            description = "Creates a new user in the system using the provided data"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "User created successfully"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
-            @ApiResponse(responseCode = "409", description = "The user already exists", content = @Content)
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "User created successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "User already exists",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
     })
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userCreateDTO) {
-        UserProfile user = userService.createUser(userMapper.toCreateUserCommand(userCreateDTO));
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
+    )
+    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
+        UserProfile user = userService.createUser(
+                userMapper.toCreateUserCommand(userCreateDTO));
 
-        return ResponseEntity.ok(userMapper.toUserDTO(user));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(userMapper.toUserDTO(user));
     }
 
     @Operation(
@@ -71,7 +102,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable UUID userId) {
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable UUID userId) {
         return ResponseEntity.ok(userMapper.toUserDTO(userService.getUserById(userId)));
     }
 
@@ -85,7 +116,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
     })
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UserSaveDTO dto) {
+    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody UserSaveDTO dto) {
         UpdateUserCommand cmd = userMapper.toUpdateUserCommand(userId, dto);
         UserProfile user = userService.updateUser(cmd);
 

@@ -1,7 +1,7 @@
 package com.incident_manager.mapper;
 
 import com.incident_manager.DTO.user.UserCreateDTO;
-import com.incident_manager.DTO.user.UserDTO;
+import com.incident_manager.DTO.user.UserResponseDTO;
 import com.incident_manager.DTO.user.UserInfoDTO;
 import com.incident_manager.DTO.user.UserSaveDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupInfoDTO;
@@ -34,7 +34,7 @@ public class UserMapper {
         );
     }
 
-    public UserDTO toUserDTO(UserProfile user) {
+    public UserResponseDTO toUserDTO(UserProfile user) {
         List<WorkGroupInfoDTO> groups = user.getAuthUser().getGroups()
                 .stream()
                 .map(group -> new WorkGroupInfoDTO(
@@ -42,7 +42,7 @@ public class UserMapper {
                         group.getName()))
                 .toList();
 
-        return new UserDTO(
+        return new UserResponseDTO(
                 user.getId(), user.getName(),
                 user.getLastName(),
                 user.getSecondLastName(),

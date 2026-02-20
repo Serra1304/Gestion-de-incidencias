@@ -3,7 +3,7 @@ package com.incident_manager.mapper;
 import com.incident_manager.DTO.user.UserCreateDTO;
 import com.incident_manager.DTO.user.UserResponseDTO;
 import com.incident_manager.DTO.user.UserSummaryDTO;
-import com.incident_manager.DTO.user.UserSaveDTO;
+import com.incident_manager.DTO.user.UserUpdateDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupInfoDTO;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.UserProfile;
@@ -80,12 +80,12 @@ public class UserMapper {
         );
     }
 
-    public UpdateUserCommand toUpdateUserCommand(UUID id, UserSaveDTO user) {
+    public UpdateUserCommand toUpdateUserCommand(UUID id, UserUpdateDTO user) {
         return new UpdateUserCommand(
                 id,
                 user.name(),
-                user.lastname(),
-                user.secondLastname(),
+                user.lastName(),
+                user.secondLastName(),
                 user.address(),
                 user.addressNumber(),
                 user.city(),

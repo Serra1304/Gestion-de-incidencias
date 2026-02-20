@@ -3,7 +3,7 @@ package com.incident_manager.controller;
 import com.incident_manager.DTO.user.UserCreateDTO;
 import com.incident_manager.DTO.user.UserResponseDTO;
 import com.incident_manager.DTO.user.UserSummaryDTO;
-import com.incident_manager.DTO.user.UserSaveDTO;
+import com.incident_manager.DTO.user.UserUpdateDTO;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.mapper.UserMapper;
 import com.incident_manager.service.UserService;
@@ -170,15 +170,64 @@ public class UserController {
 
     @Operation(
             summary = "Update user",
-            description = "Update the data of an existing user"
+            description = "Updates an existing user. Only the provided fields will be modified."
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User successfully updated"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data", content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User updated successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UserResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict updating user",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
     })
-    @PutMapping("/{userId}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable UUID userId, @RequestBody UserSaveDTO dto) {
+    @PutMapping(
+            value = "/{userId}",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<UserResponseDTO> updateUser(
+            @Parameter(
+                    description = "Unique identifier of the user",
+                    required = true
+            )
+            @PathVariable UUID userId,
+
+            @Valid @RequestBody UserUpdateDTO dto
+    ) {
         UpdateUserCommand cmd = userMapper.toUpdateUserCommand(userId, dto);
         UserProfile user = userService.updateUser(cmd);
 

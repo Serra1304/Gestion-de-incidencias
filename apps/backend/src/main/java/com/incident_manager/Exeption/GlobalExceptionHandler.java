@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -88,6 +89,27 @@ public class GlobalExceptionHandler {
         problem.setInstance(URI.create(request.getRequestURI()));
 
         return ResponseEntity.internalServerError().body(problem);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ProblemDetail> handleTypeMismatch(
+            MethodArgumentTypeMismatchException ex,
+            HttpServletRequest request
+    ) {
+        ProblemDetail problem = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+
+        problem.setTitle("Invalid request parameter");
+        problem.setType(URI.create("https://api.incident-manager.com/problems/invalid-parameter"));
+        problem.setDetail(
+                String.format(
+                        "Parameter '%s' has invalid value '%s'",
+                        ex.getName(),
+                        ex.getValue()
+                )
+        );
+        problem.setInstance(URI.create(request.getRequestURI()));
+
+        return ResponseEntity.badRequest().body(problem);
     }
 
     // Resource Not Found

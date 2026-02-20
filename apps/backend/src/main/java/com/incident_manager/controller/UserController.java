@@ -9,6 +9,7 @@ import com.incident_manager.mapper.UserMapper;
 import com.incident_manager.service.UserService;
 import com.incident_manager.service.command.UpdateUserCommand;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -76,7 +77,7 @@ public class UserController {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(userMapper.toUserDTO(user));
+                .body(userMapper.toUserResponseDTO(user));
     }
 
     @Operation(
@@ -115,15 +116,56 @@ public class UserController {
 
     @Operation(
             summary = "Get user by ID",
-            description = "Returns complete user information based on their identifier"
+            description = "Returns full user details for the given user identifier"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "User found"),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User retrieved successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UserResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid request parameter",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
     })
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponseDTO> getUser(@PathVariable UUID userId) {
-        return ResponseEntity.ok(userMapper.toUserDTO(userService.getUserById(userId)));
+    @GetMapping(
+            value = "/{userId}",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<UserResponseDTO> getUser(
+            @Parameter(
+                    description = "Unique identifier of the user",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID userId) {
+
+        UserProfile user = userService.getUserById(userId);
+        return ResponseEntity.ok(userMapper.toUserResponseDTO(user));
     }
 
     @Operation(
@@ -140,7 +182,7 @@ public class UserController {
         UpdateUserCommand cmd = userMapper.toUpdateUserCommand(userId, dto);
         UserProfile user = userService.updateUser(cmd);
 
-        return ResponseEntity.ok(userMapper.toUserDTO(user));
+        return ResponseEntity.ok(userMapper.toUserResponseDTO(user));
     }
 
     @Operation(

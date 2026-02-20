@@ -34,7 +34,7 @@ public class UserMapper {
         );
     }
 
-    public UserResponseDTO toUserDTO(UserProfile user) {
+    public UserResponseDTO toUserResponseDTO(UserProfile user) {
         List<WorkGroupInfoDTO> groups = user.getAuthUser().getGroups()
                 .stream()
                 .map(group -> new WorkGroupInfoDTO(

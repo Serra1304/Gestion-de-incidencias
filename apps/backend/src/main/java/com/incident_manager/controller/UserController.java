@@ -236,14 +236,47 @@ public class UserController {
 
     @Operation(
             summary = "Delete user",
-            description = "Remove a user from the system by their identifier"
+            description = "Deletes a user identified by the given identifier"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "User successfully deleted"),
-            @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "User deleted successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid user identifier",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "User not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
     })
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> delete(@PathVariable UUID userId) {
+    public ResponseEntity<Void> delete(
+            @Parameter(
+                    description = "Unique identifier of the user to delete",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID userId
+    ) {
         userService.deleteUser(userId);
 
         return ResponseEntity.noContent().build();

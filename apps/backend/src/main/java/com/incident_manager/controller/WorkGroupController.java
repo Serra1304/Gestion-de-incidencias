@@ -104,7 +104,11 @@ public class WorkGroupController {
     public ResponseEntity<List<UserSummaryDTO>> getGroupUsers(@PathVariable UUID groupId) {
         Set<AuthUser> users = service.getGroupUsers(groupId);
 
-        return ResponseEntity.ok(users.stream().map(userMapper::toUserInfoDTO).toList());
+        return ResponseEntity.ok(users
+                .stream()
+                .map(AuthUser::getProfile)
+                .map(userMapper::toUserSummaryDTO)
+                .toList());
     }
 
     // Get Available user from group
@@ -112,7 +116,11 @@ public class WorkGroupController {
     public ResponseEntity<List<UserSummaryDTO>> getAvailableUsers(@PathVariable UUID groupId) {
         List<AuthUser> users = service.getAvailableUsers(groupId);
 
-        return ResponseEntity.ok(users.stream().map(userMapper::toUserInfoDTO).toList());
+        return ResponseEntity.ok(users
+                .stream()
+                .map(AuthUser::getProfile)
+                .map(userMapper::toUserSummaryDTO)
+                .toList());
     }
 
     // Update group users list

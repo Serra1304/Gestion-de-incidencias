@@ -110,7 +110,7 @@ public class UserController {
 
         return ResponseEntity.ok(users
                 .stream()
-                .map(userMapper::toUserInfoDTO)
+                .map(userMapper::toUserSummaryDTO)
                 .toList());
     }
 
@@ -217,7 +217,10 @@ public class UserController {
     @PutMapping(
             value = "/{userId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
     )
     public ResponseEntity<UserResponseDTO> updateUser(
             @Parameter(

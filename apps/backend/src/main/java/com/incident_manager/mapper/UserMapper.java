@@ -5,7 +5,6 @@ import com.incident_manager.DTO.user.UserResponseDTO;
 import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.user.UserUpdateDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupInfoDTO;
-import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.service.command.CreateUserCommand;
 import com.incident_manager.service.command.UpdateUserCommand;
@@ -16,16 +15,8 @@ import java.util.UUID;
 
 @Component
 public class UserMapper {
-    public UserSummaryDTO toUserInfoDTO(AuthUser user) {
-        return new UserSummaryDTO(
-                user.getProfile().getId(),
-                user.getProfile().getName(),
-                user.getProfile().getLastName(),
-                user.getProfile().getSecondLastName()
-        );
-    }
 
-    public UserSummaryDTO toUserInfoDTO(UserProfile user) {
+    public UserSummaryDTO toUserSummaryDTO(UserProfile user) {
         return new UserSummaryDTO(
                 user.getId(),
                 user.getName(),

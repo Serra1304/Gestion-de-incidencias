@@ -1,6 +1,6 @@
 package com.incident_manager.mapper;
 
-import com.incident_manager.DTO.user.UserInfoDTO;
+import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
 import com.incident_manager.entity.WorkGroup;
@@ -29,7 +29,7 @@ public class WorkGroupMapper {
                 groupFullData.group().getActive(),
                 groupFullData.groupUsers()
                         .stream()
-                        .map(user -> new UserInfoDTO(
+                        .map(user -> new UserSummaryDTO(
                                 user.getId(),
                                 user.getProfile().getName(),
                                 user.getProfile().getLastName(),
@@ -37,7 +37,7 @@ public class WorkGroupMapper {
                         .collect(Collectors.toList()),
                 groupFullData.availableUsers()
                         .stream()
-                        .map(user -> new UserInfoDTO(
+                        .map(user -> new UserSummaryDTO(
                                 user.getId(),
                                 user.getProfile().getName(),
                                 user.getProfile().getLastName(),

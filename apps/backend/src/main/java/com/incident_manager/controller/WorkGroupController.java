@@ -1,6 +1,6 @@
 package com.incident_manager.controller;
 
-import com.incident_manager.DTO.user.UserInfoDTO;
+import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.workGroup.*;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.WorkGroup;
@@ -101,7 +101,7 @@ public class WorkGroupController {
 
     // Get users from group
     @GetMapping("/{groupId}/users")
-    public ResponseEntity<List<UserInfoDTO>> getGroupUsers(@PathVariable UUID groupId) {
+    public ResponseEntity<List<UserSummaryDTO>> getGroupUsers(@PathVariable UUID groupId) {
         Set<AuthUser> users = service.getGroupUsers(groupId);
 
         return ResponseEntity.ok(users.stream().map(userMapper::toUserInfoDTO).toList());
@@ -109,7 +109,7 @@ public class WorkGroupController {
 
     // Get Available user from group
     @GetMapping("/{groupId}/users/available")
-    public ResponseEntity<List<UserInfoDTO>> getAvailableUsers(@PathVariable UUID groupId) {
+    public ResponseEntity<List<UserSummaryDTO>> getAvailableUsers(@PathVariable UUID groupId) {
         List<AuthUser> users = service.getAvailableUsers(groupId);
 
         return ResponseEntity.ok(users.stream().map(userMapper::toUserInfoDTO).toList());

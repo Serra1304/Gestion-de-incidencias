@@ -2,7 +2,7 @@ package com.incident_manager.security.authentication;
 
 import com.incident_manager.DTO.AuthResponseDTO;
 import com.incident_manager.DTO.UserAuthDTO;
-import com.incident_manager.DTO.user.UserInfoDTO;
+import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.InvalidToken;
 import com.incident_manager.repository.AuthUserRepository;
@@ -47,9 +47,9 @@ public class AuthenticationService {
 
         String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getSecurityRole());
         UserAuthDTO userAuthDTO = new UserAuthDTO(user.getEmail(), user.getSecurityRole());
-        UserInfoDTO userInfoDTO = userService.getUserByAuthUserId(user.getId());
+        UserSummaryDTO userSummaryDTO = userService.getUserByAuthUserId(user.getId());
 
-        return new AuthResponseDTO(token, userInfoDTO, userAuthDTO);
+        return new AuthResponseDTO(token, userSummaryDTO, userAuthDTO);
     }
 
     public void logout(String token, UUID userId) {

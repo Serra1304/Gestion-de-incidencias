@@ -2,7 +2,7 @@ package com.incident_manager.controller;
 
 import com.incident_manager.DTO.user.UserCreateDTO;
 import com.incident_manager.DTO.user.UserResponseDTO;
-import com.incident_manager.DTO.user.UserInfoDTO;
+import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.user.UserSaveDTO;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.mapper.UserMapper;
@@ -81,16 +81,36 @@ public class UserController {
 
     @Operation(
             summary = "Get all users",
-            description = "Returns a list with basic information about all registered users"
+            description = "Returns a list of users with basic identification data"
     )
-    @ApiResponse(
-            responseCode = "200", description = "User list obtained successfully"
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User list retrieved successfully",
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = UserSummaryDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Internal server error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @GetMapping(
+            produces = MediaType.APPLICATION_JSON_VALUE
     )
-    @GetMapping("")
-    public ResponseEntity<List<UserInfoDTO>> getAllUsers() {
+    public ResponseEntity<List<UserSummaryDTO>> getAllUsers() {
         List<UserProfile> users = userService.getUsers();
 
-        return ResponseEntity.ok(users.stream().map(userMapper::toUserInfoDTO).toList());
+        return ResponseEntity.ok(users
+                .stream()
+                .map(userMapper::toUserInfoDTO)
+                .toList());
     }
 
     @Operation(

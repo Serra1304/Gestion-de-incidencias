@@ -1,6 +1,6 @@
 package com.incident_manager.service;
 
-import com.incident_manager.DTO.user.UserInfoDTO;
+import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.Exeption.ConflictException;
 import com.incident_manager.Exeption.ResourceNotFoundException;
 import com.incident_manager.entity.AuthUser;
@@ -107,11 +107,11 @@ public class UserService {
         return user;
     }
 
-    public UserInfoDTO getUserByAuthUserId(UUID id) {
+    public UserSummaryDTO getUserByAuthUserId(UUID id) {
         UserProfile user = userRepository.findByAuthUserId(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        return new UserInfoDTO(
+        return new UserSummaryDTO(
                 user.getId(),
                 user.getName(),
                 user.getLastName(),

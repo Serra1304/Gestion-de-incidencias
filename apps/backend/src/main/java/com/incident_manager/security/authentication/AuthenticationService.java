@@ -5,6 +5,7 @@ import com.incident_manager.DTO.UserAuthDTO;
 import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.InvalidToken;
+import com.incident_manager.mapper.UserMapper;
 import com.incident_manager.repository.AuthUserRepository;
 import com.incident_manager.repository.InvalidTokenRepository;
 import com.incident_manager.repository.UserProfileRepository;
@@ -23,18 +24,20 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final UserService userService;
+    private final UserMapper userMapper;
 
     public AuthenticationService(
             AuthUserRepository authUserRepository, UserProfileRepository userProfileRepository,
             InvalidTokenRepository invalidTokenRepository,
             PasswordEncoder passwordEncoder,
-            JwtService jwtService, UserService userService
+            JwtService jwtService, UserService userService, UserMapper userMapper
     ) {
         this.authUserRepository = authUserRepository;
         this.userService = userService;
         this.invalidTokenRepository = invalidTokenRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.userMapper = userMapper;
     }
 
     public AuthResponseDTO login(String email, String password) {
@@ -47,7 +50,9 @@ public class AuthenticationService {
 
         String token = jwtService.generateToken(user.getId(), user.getEmail(), user.getSecurityRole());
         UserAuthDTO userAuthDTO = new UserAuthDTO(user.getEmail(), user.getSecurityRole());
-        UserSummaryDTO userSummaryDTO = userService.getUserByAuthUserId(user.getId());
+        //UserSummaryDTO userSummaryDTO = userService.getUserByAuthUserId(user.getId());
+
+        UserSummaryDTO userSummaryDTO = userMapper.toUserSummaryDTO(userService.getUserProfileByAuthUserId(user.getId()));
 
         return new AuthResponseDTO(token, userSummaryDTO, userAuthDTO);
     }

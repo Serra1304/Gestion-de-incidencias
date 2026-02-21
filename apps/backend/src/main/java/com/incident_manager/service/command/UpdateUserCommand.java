@@ -6,8 +6,8 @@ import java.util.UUID;
 public record UpdateUserCommand(
         UUID userId,
         String name,
-        String lastname,
-        String secondLastname,
+        String lastName,
+        String secondLastName,
         String address,
         String addressNumber,
         String city,

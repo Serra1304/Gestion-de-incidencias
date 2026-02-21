@@ -164,7 +164,7 @@ public class UserController {
             )
             @PathVariable UUID userId) {
 
-        UserProfile user = userService.getUserById(userId);
+        UserProfile user = userService.getUserProfileById(userId);
         return ResponseEntity.ok(userMapper.toUserResponseDTO(user));
     }
 

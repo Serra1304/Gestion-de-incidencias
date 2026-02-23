@@ -15,7 +15,7 @@ export default function GroupLayout({ children }: { children: React.ReactNode })
 
     useEffect(() => {
         async function loadGroups() {
-            const data = await fetchGroups();
+            const data: GroupListItem[] = await fetchGroups();
             setGroups(data);
 
             const alreadySelected = /^\/groups\/[^/]+/.test(pathname);

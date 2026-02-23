@@ -1,6 +1,6 @@
 "use client";
 
-import { VARIANTS, Variant } from "@/components/ui/theme/variants";
+import { THEME, Theme } from "./theme/theme";
 
 /**
  * Props para el componente CheckboxField.
@@ -22,7 +22,7 @@ type CheckboxFieldProps = {
 	className?: string;
 
 	/** Variante visual del checkbox */
-	variant?: Variant;
+	theme?: Theme;
 };
 
 /**
@@ -49,7 +49,7 @@ export default function CheckboxField({
 	checked,
 	onChange,
 	className = "",
-	variant = "standard"
+	theme = "standard"
 }: CheckboxFieldProps) {
 
 	return (
@@ -69,13 +69,13 @@ export default function CheckboxField({
 			<label
 				htmlFor={name}
 				className={`w-5 h-5 border-2 rounded-md flex items-center justify-center cursor-pointer 
-					${VARIANTS[variant].border} ${VARIANTS[variant].bg} ${VARIANTS[variant].text}`}
+					${THEME[theme].border.base} ${THEME[theme].bg.field} ${THEME[theme].text.base}`}
 			>
 				{checked ? "✓" : ""}
 			</label>
 
 			{/* Etiqueta */}
-			<span className= {`${VARIANTS[variant].text}`}>
+			<span className= {`${THEME[theme].text.base}`}>
 				{label}
 			</span>
 		</div>

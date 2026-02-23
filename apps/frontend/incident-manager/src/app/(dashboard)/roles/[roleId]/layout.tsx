@@ -4,20 +4,19 @@ import React, { useEffect, useState, createContext } from "react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import clsx from "clsx";
-import { createGroup, fetchFullGroup, updateGroup } from "@/data/workGroup.api";
-import { GroupFull } from "@/modules/workGroup/type/groupFull"
+import { fetchRoleById } from "@/data/role";
+import { Role } from "@/modules/role/type/role"
 import Button from "@/components/ui/Button";
-import { fetchUsers } from "@/data/user.api";
 
-export const GroupContext = createContext<{
-  group: GroupFull | null;
-  updateGroup: (patch: Partial<GroupFull>) => void;
-  refreshGroup: () => Promise<void>;
+export const RoleContext = createContext<{
+  role: Role | null;
+  setRole: (r: Role) => void;
+  refreshRole: () => Promise<void>;
   loading: boolean;
 }>({
-  group: null,
-  updateGroup: () => {},
-  refreshGroup: async () => {},
+  role: null,
+  setRole: () => { },
+  refreshRole: async () => { },
   loading: true,
 });
 
@@ -28,121 +27,53 @@ export const UnsavedContext = createContext<{ setHasUnsavedChanges: (v: boolean)
 const tabs = [
   { name: "General", href: "general" },
   { name: "Usuarios", href: "users" },
+  { name: "Permisos", href: "permissions" },
 ];
 
-export default function GroupRightLayout({ children }: { children: React.ReactNode }) {
+export default function RoleRightLayout({ children }: { children: React.ReactNode }) {
   const params = useParams();
   const pathname = usePathname();
-  const groupId = params?.groupId as string;
+  const roleId = params?.roleId as string;
 
-  const [group, setGroups] = useState<GroupFull | null>(null);
+  const [role, setRole] = useState<Role | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(false);
-  const [isNewGroup, setIsNewGroup] = useState<boolean>(false);
 
-async function loadgroup() {
-  if (!groupId) return;
-  setLoading(true);
-
-  const r = await fetchFullGroup(groupId);
-
-  setGroups({
-    ...r,
-    users: r.users ?? [],
-    availableUsers: r.availableUsers ?? [],
-  });
-
-  setLoading(false);
-}
-
-  useEffect(() => {
-    loadgroup();
-  }, [groupId]);
-
-  // 🆕 Nuevo grupo
-  const handleNew = async () => {
-    const emptyGroup: GroupFull = {
-      id: "",
-      name: "",
-      description: "",
-      active: true,
-      users: [],
-      availableUsers: await fetchUsers(),
-    };
-
-    setGroups(emptyGroup);
-    setHasUnsavedChanges(true);
-    setIsNewGroup(true);
-  };
-
-const handleSave = async () => {
-  if (!group) return;
-
-  try {
+  async function loadRole() {
+    if (!roleId) return;
     setLoading(true);
-
-    const payload = {
-      name: group.name,
-      description: group.description,
-      active: group.active,
-      userIds: group.users.map(u => u.id),
-    };
-
-    if (isNewGroup || !group.id) {
-      await createGroup(payload);
-      setIsNewGroup(false);
-    } else {
-      await updateGroup(group.id, payload);
-    }
-
-    await loadgroup(); 
-    setHasUnsavedChanges(false);
-
-  } catch (error) {
-    console.error("Error al guardar el grupo", error);
-    alert("Error al guardar el grupo");
-  } finally {
+    const r = await fetchRoleById(roleId);
+    setRole(r);
     setLoading(false);
   }
-};
 
-const handleGroupChange = (patch: Partial<GroupFull>) => {
-  setGroups(prev => {
-    if (!prev) return prev;
+  useEffect(() => {
+    loadRole();
+  }, [roleId]);
 
-    return {
-      ...prev,
-      ...patch,
-      users: Array.isArray(patch.users)
-        ? patch.users
-        : prev.users ?? [],
-      availableUsers: Array.isArray(patch.availableUsers)
-        ? patch.availableUsers
-        : prev.availableUsers ?? [],
-    };
-  });
-
-  setHasUnsavedChanges(true);
-};
-
+  const handleNew = () => console.log("Nuevo rol");
+  const handleSave = () => {
+    console.log("Guardar rol");
+    setHasUnsavedChanges(false);
+  };
   const handleDelete = () => {
-    if (group && confirm(`¿Eliminar el grupo "${group.name}"?`)) {
-      console.log("Eliminar grupo", group.id);
+    if (role && confirm(`¿Eliminar el rol "${role.name}"?`)) {
+      console.log("Eliminar rol", role.id);
     }
   };
 
 
   // 🧠 Evitamos renderizar mientras no exista roleId
-  if (!groupId) {
+  if (!roleId) {
     return (
       <div className="flex items-center justify-center h-full text-gray-400">
-        Cargando grupo...
+        Cargando rol...
       </div>
     );
   }
 
   return (
-    <GroupContext.Provider value={{ group, updateGroup: handleGroupChange, refreshGroup: loadgroup, loading, }}>
+    <RoleContext.Provider value={{ role, setRole, refreshRole: loadRole, loading }}>
       <UnsavedContext.Provider value={{ setHasUnsavedChanges }}>
         <div className="flex flex-col h-full">
           {/* Encabezado */}
@@ -153,11 +84,11 @@ const handleGroupChange = (patch: Partial<GroupFull>) => {
                   <div className="h-7 w-56 bg-gray-700 rounded" />
                   <div className="h-5 w-80 bg-gray-800 rounded mt-2" />
                 </div>
-              ) : group ? (
+              ) : role ? (
                 <div>
-                  <h1 className="text-3xl font-bold text-white">{group.name}</h1>
-                  {group.description && (
-                    <p className="text-sm text-gray-400">{group.description}</p>
+                  <h1 className="text-3xl font-bold text-white">{role.name}</h1>
+                  {role.description && (
+                    <p className="text-sm text-gray-400">{role.description}</p>
                   )}
                 </div>
               ) : (
@@ -173,7 +104,7 @@ const handleGroupChange = (patch: Partial<GroupFull>) => {
               )}
               <Button onClick={handleNew}>Nuevo</Button>
               <Button onClick={handleSave}>Guardar</Button>
-              <Button onClick={handleDelete}>
+              <Button variant="danger" onClick={handleDelete}>
                 Eliminar
               </Button>
             </div>
@@ -186,7 +117,7 @@ const handleGroupChange = (patch: Partial<GroupFull>) => {
               return (
                 <Link
                   key={tab.href}
-                  href={`/groups/${groupId}/${tab.href}`}
+                  href={`/roles/${roleId}/${tab.href}`}
                   className={clsx(
                     "px-4 py-3 inline-block text-sm font-medium transition-colors",
                     isActive
@@ -204,6 +135,6 @@ const handleGroupChange = (patch: Partial<GroupFull>) => {
           <section className="flex-1 overflow-auto p-4">{children}</section>
         </div>
       </UnsavedContext.Provider>
-    </GroupContext.Provider>
+    </RoleContext.Provider>
   );
 }

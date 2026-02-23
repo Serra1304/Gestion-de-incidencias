@@ -2,18 +2,11 @@
 
 import { VARIANTS } from "@/components/ui/theme/variants";
 import { useContext} from "react";
-import { UnsavedContext, GroupContext } from "../layout";
-import { GroupFull } from "@/modules/workGroup/type/groupFull"
+import { GroupContext } from "../layout";
 import GroupGeneral from "@/modules/workGroup/components/groupGeneral";
 
 export default function GroupGeneralPage() {
-    const { group, setGroup, loading } = useContext(GroupContext);
-  const { setHasUnsavedChanges } = useContext(UnsavedContext);
-
-  const handleGroupChange = (updatedGroup: GroupFull) => {
-    setGroup(updatedGroup);
-    setHasUnsavedChanges(true);
-  };
+    const { group, loading } = useContext(GroupContext);
 
     if (loading) {
     return <div className={`flex items-center justify-center  h-full ${VARIANTS.standard.textDisable}`}>Cargando grupo...</div>;
@@ -25,7 +18,7 @@ export default function GroupGeneralPage() {
 
   return (
     <div className="space-y-3">
-      <GroupGeneral group={group} onChange={handleGroupChange} />
+      <GroupGeneral />
     </div>
   );
 }

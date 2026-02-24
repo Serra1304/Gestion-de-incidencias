@@ -1,9 +1,11 @@
 package com.incident_manager.mapper;
 
 import com.incident_manager.DTO.user.UserSummaryDTO;
-import com.incident_manager.DTO.workGroup.WorkGroupDTO;
+import com.incident_manager.DTO.workGroup.WorkGroupCreateDTO;
+import com.incident_manager.DTO.workGroup.WorkGroupResponseDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
 import com.incident_manager.entity.WorkGroup;
+import com.incident_manager.service.command.CreateWorkGroupCommand;
 import com.incident_manager.service.data.WorkGroupFullData;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +14,8 @@ import java.util.stream.Collectors;
 @Component
 public class WorkGroupMapper {
 
-    public WorkGroupDTO toDTO(WorkGroup group) {
-        return new WorkGroupDTO(
+    public WorkGroupResponseDTO toWorkGroupResponseDTO(WorkGroup group) {
+        return new WorkGroupResponseDTO(
                 group.getId(),
                 group.getName(),
                 group.getDescription(),
@@ -43,6 +45,14 @@ public class WorkGroupMapper {
                                 user.getProfile().getLastName(),
                                 user.getProfile().getSecondLastName()))
                         .collect(Collectors.toList())
+        );
+    }
+
+    public CreateWorkGroupCommand toCreateWorkGroupCommand(WorkGroupCreateDTO dto) {
+        return new CreateWorkGroupCommand(
+                dto.name(),
+                dto.description(),
+                dto.active()
         );
     }
 }

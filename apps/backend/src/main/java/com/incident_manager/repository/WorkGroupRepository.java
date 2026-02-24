@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface WorkGroupRepository extends JpaRepository<WorkGroup, UUID> {
     boolean existsByName(String name);
+    boolean existsByNameIgnoreCase(String name);
 }

@@ -1,6 +1,5 @@
 package com.incident_manager.service;
 
-import com.incident_manager.DTO.workGroup.WorkGroupCreateDTO;
 import com.incident_manager.Exeption.BadRequestException;
 import com.incident_manager.Exeption.ConflictException;
 import com.incident_manager.Exeption.ResourceNotFoundException;
@@ -9,11 +8,14 @@ import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.repository.AuthUserRepository;
 import com.incident_manager.repository.WorkGroupRepository;
 
+import com.incident_manager.service.command.CreateWorkGroupCommand;
 import com.incident_manager.service.command.UpdateWorkGroupCommand;
 import com.incident_manager.service.data.WorkGroupFullData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -21,21 +23,32 @@ import java.util.Set;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class WorkGroupService {
-
     private final WorkGroupRepository groupRepository;
     private final AuthUserRepository userRepository;
+    private final Clock clock;
 
-    public WorkGroup createGroup(WorkGroupCreateDTO dto) {
-        if (groupRepository.existsByName(dto.name())) {
+    /**
+     * Creates a new work group in the system.
+     *
+     * @param cmd command containing group data
+     * @return persisted WorkGroup
+     * @throws ConflictException if a group with the same name already exists
+     */
+    public WorkGroup createGroup(CreateWorkGroupCommand cmd) {
+        String normalizedName = cmd.name().trim();
+        if (groupRepository.existsByNameIgnoreCase(normalizedName)) {
             throw new ConflictException("Group name already exists");
         }
 
         WorkGroup group = new WorkGroup();
-        group.setName(dto.name());
-        group.setDescription(dto.description());
-        group.setActive(dto.active() != null ? dto.active() : true);
+        group.setName(cmd.name());
+        group.setDescription(cmd.description());
+        group.setActive(Boolean.TRUE.equals(cmd.active()));
+        group.setCreatedAt(LocalDateTime.now(clock));
+        group.setUpdatedAt(LocalDateTime.now(clock));
 
         return groupRepository.save(group);
     }

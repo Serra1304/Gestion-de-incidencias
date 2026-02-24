@@ -10,7 +10,16 @@ import com.incident_manager.service.WorkGroupService;
 
 import com.incident_manager.service.command.UpdateWorkGroupCommand;
 import com.incident_manager.service.data.WorkGroupFullData;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,12 +36,43 @@ public class WorkGroupController {
     private final WorkGroupMapper groupMapper;
     private final UserMapper userMapper;
 
-    // Create group
-    @PostMapping
-    public ResponseEntity<WorkGroupDTO> create(@RequestBody WorkGroupCreateDTO dto) {
-        WorkGroup group = service.createGroup(dto);
+    @Operation(
+            summary = "Create work group",
+            description = "Creates a new work group in the system"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Group created successfully"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Validation error",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Group already exists",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @PostMapping(
+                    consumes = MediaType.APPLICATION_JSON_VALUE,
+                    produces = {
+                            MediaType.APPLICATION_JSON_VALUE,
+                            "application/problem+json"
+                    }
+            )
+    public ResponseEntity<WorkGroupResponseDTO> create(@Valid @RequestBody WorkGroupCreateDTO dto) {
+        WorkGroup group = service.createGroup(
+                groupMapper.toCreateWorkGroupCommand(dto));
 
-        return ResponseEntity.ok(groupMapper.toDTO(group));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(groupMapper.toWorkGroupResponseDTO(group));
     }
 
     // Update group
@@ -62,34 +102,34 @@ public class WorkGroupController {
 
     // Assign user to group
     @PostMapping("/{groupId}/assign/{userId}")
-    public ResponseEntity<WorkGroupDTO> assignUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
+    public ResponseEntity<WorkGroupResponseDTO> assignUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
         WorkGroup group = service.assignUser(groupId, userId);
 
-        return ResponseEntity.ok(groupMapper.toDTO(group));
+        return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
     // Remove user from group
     @DeleteMapping("/{groupId}/remove/{userId}")
-    public ResponseEntity<WorkGroupDTO> removeUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
+    public ResponseEntity<WorkGroupResponseDTO> removeUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
         WorkGroup group = service.removeUser(groupId, userId);
 
-        return ResponseEntity.ok(groupMapper.toDTO(group));
+        return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
     // Get list group
     @GetMapping
-    public ResponseEntity<List<WorkGroupDTO>> listGroup() {
+    public ResponseEntity<List<WorkGroupResponseDTO>> listGroup() {
         return ResponseEntity.ok(
                 service.listGroups()
                 .stream()
-                .map(groupMapper::toDTO)
+                .map(groupMapper::toWorkGroupResponseDTO)
                 .toList());
     }
 
     // Get group
     @GetMapping("/{groupId}")
-    public ResponseEntity<WorkGroupDTO> getGroup(@PathVariable UUID groupId) {
-        return ResponseEntity.ok(groupMapper.toDTO(service.getGroup(groupId)));
+    public ResponseEntity<WorkGroupResponseDTO> getGroup(@PathVariable UUID groupId) {
+        return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(service.getGroup(groupId)));
     }
 
     // Get full group

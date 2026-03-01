@@ -271,27 +271,153 @@ public class WorkGroupController {
         return ResponseEntity.noContent().build();
     }
 
-    // Assign user to group
-    @PostMapping("/{groupId}/assign/{userId}")
-    public ResponseEntity<WorkGroupResponseDTO> assignUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
+    @Operation(
+            summary = "Add user to work group",
+            description = "Adds an existing user to the specified work group. "
+                    + "This operation is idempotent."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User successfully added to the work group"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Work group or user not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "User already belongs to the work group",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @PutMapping(
+            value = "/{groupId}/users/{userId}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
+    )
+    public ResponseEntity<WorkGroupResponseDTO> addUserToGroup(
+            @Parameter(
+                    description = "Unique identifier of the work group",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID groupId,
+            @Parameter(
+                    description = "Unique identifier of the user to be added",
+                    example = "f2b5c6e1-5c84-4d01-8f37-6b5c3e2a8d45",
+                    required = true
+            )
+            @PathVariable UUID userId
+    ) {
+
         WorkGroup group = service.assignUser(groupId, userId);
 
         return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
-    // Remove user from group
-    @DeleteMapping("/{groupId}/remove/{userId}")
-    public ResponseEntity<WorkGroupResponseDTO> removeUser(@PathVariable UUID groupId, @PathVariable UUID userId) {
+    @Operation(
+            summary = "Remove user from work group",
+            description = "Removes a user from the specified work group. "
+                    + "This operation is idempotent."
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "User successfully removed from the work group"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Work group or user not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @DeleteMapping(
+            value = "/{groupId}/users/{userId}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
+    )
+    public ResponseEntity<WorkGroupResponseDTO> removeUserFromGroup(
+            @Parameter(
+                    description = "Unique identifier of the work group",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID groupId,
+            @Parameter(
+                    description = "Unique identifier of the user to be added",
+                    example = "f2b5c6e1-5c84-4d01-8f37-6b5c3e2a8d45",
+                    required = true
+            )
+            @PathVariable UUID userId
+    ) {
+
         WorkGroup group = service.removeUser(groupId, userId);
 
         return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
-    // Update group users list
-    @PostMapping("/{groupId}/users")
-    public ResponseEntity<WorkGroupFullDTO> updateGroupUsers(@PathVariable UUID groupId, @RequestBody GroupUsersUpdateDTO dto) {
+    @Operation(
+            summary = "Replace work group users",
+            description = "Replaces the entire list of users associated with the specified work group"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Work group users updated successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Work group not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @PutMapping(
+            value = "/{groupId}/users",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
+    )
+    public ResponseEntity<WorkGroupResponseDTO> replaceGroupUsers(
+            @Parameter(
+                    description = "Unique identifier of the work group",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID groupId,
+            @Valid @RequestBody GroupUsersUpdateDTO dto
+    ) {
 
-        return ResponseEntity.ok(groupMapper.toFullGroupDTO(service.updateGroupUsers(groupId, dto.userIds())));
+        WorkGroup group = service.updateGroupUsers(groupId, dto.userIds());
+
+        return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group)
+        );
     }
 }
 

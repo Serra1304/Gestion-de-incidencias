@@ -141,28 +141,28 @@ public class WorkGroupService {
                 .toList();
     }
 
-    public WorkGroupFullData updateGroupUsers(UUID groupId, List<UUID> userIds) {
+    public WorkGroup updateGroupUsers(UUID groupId, List<UUID> userIds) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
 
-        List<AuthUser> newUsers = userRepository.findAllById(userIds);
-        if (newUsers.size() != userIds.size()) {
+        List<AuthUser> users = userRepository.findAllById(userIds);
+        if (users.size() != userIds.size()) {
             throw new BadRequestException("Some users do not exist");
         }
 
-        group.setUsers(new HashSet<>(newUsers));
+        group.setUsers(new HashSet<>(users));
         groupRepository.save(group);
 
-        return getGroupFullData(groupId);
+        return group;
     }
 
-    public WorkGroupFullData getGroupFullData(UUID groupId) {
-        WorkGroup group = getGroup(groupId);
-        Set<AuthUser> groupUsers = getGroupUsers(groupId);
-        List<AuthUser> availableUsers = getAvailableUsers(groupId);
-
-        return new WorkGroupFullData(group, groupUsers, availableUsers);
-    }
+//    public WorkGroupFullData getGroupFullData(UUID groupId) {
+//        WorkGroup group = getGroup(groupId);
+//        Set<AuthUser> groupUsers = getGroupUsers(groupId);
+//        List<AuthUser> availableUsers = getAvailableUsers(groupId);
+//
+//        return new WorkGroupFullData(group, groupUsers, availableUsers);
+//    }
 
 }

@@ -2,15 +2,12 @@ package com.incident_manager.controller;
 
 import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.workGroup.*;
-import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.mapper.UserMapper;
 import com.incident_manager.mapper.WorkGroupMapper;
 import com.incident_manager.service.WorkGroupService;
 
-import com.incident_manager.service.command.UpdateWorkGroupCommand;
-import com.incident_manager.service.data.WorkGroupFullData;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -189,21 +185,49 @@ public class WorkGroupController {
                 .toList());
     }
 
-    // Update group
-    @PutMapping("/{groupId}")
-    public ResponseEntity<WorkGroupFullDTO> updateGroup(@PathVariable UUID groupId, @RequestBody WorkGroupSaveDTO dto
+    @Operation(
+            summary = "Update work group",
+            description = "Updates an existing work group identified by its ID"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Work group updated successfully"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Work group not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Group name already exists",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @PutMapping(
+            value = "/{groupId}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    "application/problem+json"
+            }
+    )
+    public ResponseEntity<WorkGroupResponseDTO> updateWorkGroup(
+            @Parameter(
+                    description = "Unique identifier of the work group",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )
+            @PathVariable UUID groupId,
+            @Valid @RequestBody WorkGroupUpdateDTO dto
     ) {
-        UpdateWorkGroupCommand cmd = new UpdateWorkGroupCommand(
-                groupId,
-                dto.name(),
-                dto.description(),
-                dto.active(),
-                dto.userIds()
-        );
+        WorkGroup group = service.updateGroup(
+                groupMapper.toUpdateWorkGroupCommand(groupId, dto));
 
-        WorkGroupFullData result = service.updateGroup(cmd);
-
-        return ResponseEntity.ok(groupMapper.toFullGroupDTO(result));
+        return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
     // Delete group
@@ -229,13 +253,6 @@ public class WorkGroupController {
 
         return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
-
-    // Get full group
-//    @GetMapping("/{groupId}/full")
-//    public ResponseEntity<WorkGroupFullDTO> getFullGroup(@PathVariable UUID groupId) {
-//
-//        return ResponseEntity.ok(groupMapper.toFullGroupDTO(service.getGroupFullData(groupId)));
-//    }
 
     // Update group users list
     @PostMapping("/{groupId}/users")

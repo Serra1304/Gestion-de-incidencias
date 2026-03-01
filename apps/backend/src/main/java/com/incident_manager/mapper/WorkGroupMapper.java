@@ -4,11 +4,15 @@ import com.incident_manager.DTO.user.UserSummaryDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupCreateDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupResponseDTO;
 import com.incident_manager.DTO.workGroup.WorkGroupFullDTO;
+import com.incident_manager.DTO.workGroup.WorkGroupUpdateDTO;
 import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.service.command.CreateWorkGroupCommand;
+import com.incident_manager.service.command.UpdateUserCommand;
+import com.incident_manager.service.command.UpdateWorkGroupCommand;
 import com.incident_manager.service.data.WorkGroupFullData;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -53,6 +57,16 @@ public class WorkGroupMapper {
                 dto.name(),
                 dto.description(),
                 dto.active()
+        );
+    }
+
+    public UpdateWorkGroupCommand toUpdateWorkGroupCommand(UUID id, WorkGroupUpdateDTO dto) {
+        return new UpdateWorkGroupCommand(
+                id,
+                dto.name(),
+                dto.description(),
+                dto.active(),
+                dto.userIds()
         );
     }
 }

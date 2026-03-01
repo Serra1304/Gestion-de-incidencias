@@ -54,16 +54,13 @@ public class WorkGroupService {
         return groupRepository.save(group);
     }
 
-    public WorkGroupFullData updateGroup(UpdateWorkGroupCommand cmd) {
+    public WorkGroup updateGroup(UpdateWorkGroupCommand cmd) {
         WorkGroup group = groupRepository.findById(cmd.groupId())
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        // Datos básicos
         if (cmd.name() != null) group.setName(cmd.name());
         if (cmd.description() != null) group.setDescription(cmd.description());
         if (cmd.active() != null) group.setActive(cmd.active());
-
-        // Usuarios del grupo
         if (cmd.userIds() != null) {
             Set<AuthUser> users = new HashSet<>(
                     userRepository.findAllById(cmd.userIds())
@@ -74,14 +71,7 @@ public class WorkGroupService {
         group.setUpdatedAt(LocalDateTime.now());
         groupRepository.save(group);
 
-        // Usuarios disponibles
-        Set<AuthUser> groupUsers = group.getUsers();
-        List<AuthUser> availableUsers = userRepository.findAll()
-                .stream()
-                .filter(u -> !groupUsers.contains(u))
-                .toList();
-
-        return new WorkGroupFullData(group, groupUsers, availableUsers);
+        return group;
     }
 
     public void deleteGroup(UUID id) {

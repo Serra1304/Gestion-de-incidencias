@@ -230,9 +230,42 @@ public class WorkGroupController {
         return ResponseEntity.ok(groupMapper.toWorkGroupResponseDTO(group));
     }
 
-    // Delete group
-    @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> delete(@PathVariable UUID groupId) {
+    @Operation(
+            summary = "Delete work group",
+            description = "Deletes an existing work group identified by its ID"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Work group deleted successfully"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Work group not found",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Work group cannot be deleted due to existing dependencies",
+                    content = @Content(
+                            mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)
+                    )
+            )
+    })
+    @DeleteMapping(
+            value = "/{groupId}",
+            produces = "application/problem+json"
+    )
+    public ResponseEntity<Void> deleteWorkGroup(
+            @Parameter(
+                    description = "Unique identifier of the work group",
+                    example = "c1a7a3d2-9e42-4b9f-bf61-9e3c6c0d9b21",
+                    required = true
+            )@PathVariable UUID groupId) {
         service.deleteGroup(groupId);
 
         return ResponseEntity.noContent().build();

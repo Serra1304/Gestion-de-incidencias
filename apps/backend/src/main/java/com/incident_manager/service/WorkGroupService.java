@@ -4,6 +4,7 @@ import com.incident_manager.Exeption.BadRequestException;
 import com.incident_manager.Exeption.ConflictException;
 import com.incident_manager.Exeption.ResourceNotFoundException;
 import com.incident_manager.entity.AuthUser;
+import com.incident_manager.entity.UserProfile;
 import com.incident_manager.entity.WorkGroup;
 import com.incident_manager.repository.AuthUserRepository;
 import com.incident_manager.repository.WorkGroupRepository;
@@ -126,14 +127,18 @@ public class WorkGroupService {
         return groupRepository.findAll();
     }
 
-    public Set<AuthUser> getGroupUsers(UUID groupId) {
+    public List<UserProfile> getGroupUsers(UUID groupId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        return group.getUsers();
+        return group
+                .getUsers()
+                .stream()
+                .map(AuthUser::getProfile)
+                .toList();
     }
 
-    public List<AuthUser> getAvailableUsers(UUID groupId) {
+    public List<UserProfile> getAvailableUsers(UUID groupId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
@@ -142,6 +147,7 @@ public class WorkGroupService {
         return userRepository.findAll()
                 .stream()
                 .filter(u -> !usersInGroup.contains(u))
+                .map(AuthUser::getProfile)
                 .toList();
     }
 

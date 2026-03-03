@@ -1,5 +1,7 @@
 package com.incident_manager.entity;
 
+import com.incident_manager.common.Auditable;
+import com.incident_manager.common.TimestampListener;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,10 +13,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(TimestampListener.class)
 @Getter @Setter
 @NoArgsConstructor
 @Table(name = "auth_user")
-public class AuthUser {
+public class AuthUser implements Auditable {
 
     @Id
     @GeneratedValue

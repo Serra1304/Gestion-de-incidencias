@@ -1,5 +1,7 @@
 package com.incident_manager.entity;
 
+import com.incident_manager.common.Auditable;
+import com.incident_manager.common.TimestampListener;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,11 +11,12 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(TimestampListener.class)
 @Table(name = "ticket_status_history")
 @Getter
 @Setter
 @NoArgsConstructor
-public class TicketStatusHistory {
+public class TicketStatusHistory implements Auditable {
 
     @Id
     @GeneratedValue
@@ -31,10 +34,6 @@ public class TicketStatusHistory {
     @ManyToOne(fetch = FetchType.LAZY)
     private AuthUser changedBy;
 
-    private LocalDateTime changedAt;
-
-    @PrePersist
-    void onCreate() {
-        changedAt = LocalDateTime.now();
-    }
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

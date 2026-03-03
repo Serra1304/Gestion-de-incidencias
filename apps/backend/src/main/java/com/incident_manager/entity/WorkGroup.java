@@ -1,5 +1,7 @@
 package com.incident_manager.entity;
 
+import com.incident_manager.common.Auditable;
+import com.incident_manager.common.TimestampListener;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,12 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(TimestampListener.class)
 @Table(name = "work_group")
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WorkGroup {
+public class WorkGroup implements Auditable {
 
     @Id
     @GeneratedValue
@@ -31,7 +34,7 @@ public class WorkGroup {
     @ManyToMany(mappedBy = "groups")
     private Set<AuthUser> users;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
 

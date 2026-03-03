@@ -16,8 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +27,6 @@ import java.util.UUID;
 public class WorkGroupService {
     private final WorkGroupRepository groupRepository;
     private final AuthUserRepository userRepository;
-    private final Clock clock;
 
     /**
      * Creates a new work group in the system.
@@ -48,8 +45,6 @@ public class WorkGroupService {
         group.setName(cmd.name());
         group.setDescription(cmd.description());
         group.setActive(Boolean.TRUE.equals(cmd.active()));
-        group.setCreatedAt(LocalDateTime.now(clock));
-        group.setUpdatedAt(LocalDateTime.now(clock));
 
         return groupRepository.save(group);
     }
@@ -68,7 +63,6 @@ public class WorkGroupService {
             group.setUsers(users);
         }
 
-        group.setUpdatedAt(LocalDateTime.now());
         groupRepository.save(group);
 
         return group;

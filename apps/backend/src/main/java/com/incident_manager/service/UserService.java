@@ -15,8 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,9 +32,6 @@ import java.util.UUID;
  *   <li>Handle transactional consistency between AuthUser and UserProfile</li>
  *   <li>Centralize user-related domain logic</li>
  * </ul>
- *
- * <p>Time-related operations rely on an injected {@link Clock} to ensure
- * deterministic behavior and testability.
  */
 @Service
 @Transactional
@@ -46,7 +41,6 @@ public class UserService {
     private final AuthUserRepository authUserRepository;
     private final WorkGroupRepository workGroupRepository;
     private final PasswordEncoder passwordEncoder;
-    private final Clock clock;
 
     /**
      * Creates a new user along with its authentication data.
@@ -186,7 +180,6 @@ public class UserService {
             authUser.setGroups(groups);
         }
 
-        user.setUpdatedAt(LocalDateTime.now(clock));
         userRepository.save(user);
 
         return user;
@@ -211,8 +204,7 @@ public class UserService {
     /**
      * Builds a {@link UserProfile} entity from the creation command.
      *
-     * <p>This method centralizes profile initialization logic and ensures
-     * timestamps are generated using the injected {@link Clock}.
+     * <p>This method centralizes profile initialization logic.
      */
     private UserProfile buildUserProfile(CreateUserCommand cmd, AuthUser authUser) {
         UserProfile user = new UserProfile();
@@ -227,8 +219,6 @@ public class UserService {
         user.setPhone(cmd.phone());
         user.setPhoneBusiness(cmd.phoneBusiness());
         user.setPhoneExtension(cmd.phoneExtension());
-        user.setCreatedAt(LocalDateTime.now(clock));
-        user.setUpdatedAt(LocalDateTime.now(clock));
         user.setAuthUser(authUser);
         authUser.setProfile(user);
 

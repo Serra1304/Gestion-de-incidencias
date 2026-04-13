@@ -1,4 +1,4 @@
-package com.incident_manager.Exeption;
+package com.incident_manager.Exception;
 
 import com.incident_manager.DTO.ApiErrorDTO;
 import jakarta.persistence.EntityNotFoundException;

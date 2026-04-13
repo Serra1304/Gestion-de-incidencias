@@ -5,27 +5,22 @@ import com.incident_manager.DTO.LoginRequest;
 import com.incident_manager.security.authentication.AuthenticationService;
 import com.incident_manager.security.jwt.JwtService;
 import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthenticationService authService;
     private final JwtService jwtService;
 
-    public AuthController(AuthenticationService authService, JwtService jwtService) {
-        this.authService = authService;
-        this.jwtService = jwtService;
-    }
-
     @PostMapping("/login")
     public AuthResponseDTO login(@RequestBody LoginRequest req) {
-//        String token = authService.login(req.email(), req.password());
-//
-//        return new AuthResponseDTO(token);
+
         return authService.login(req.email(), req.password());
     }
 

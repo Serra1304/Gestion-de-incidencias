@@ -1,4 +1,4 @@
-package com.incident_manager.Exeption;
+package com.incident_manager.Exception;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

@@ -1,7 +1,7 @@
 package com.incident_manager.service;
 
-import com.incident_manager.Exeption.ConflictException;
-import com.incident_manager.Exeption.ResourceNotFoundException;
+import com.incident_manager.Exception.ConflictException;
+import com.incident_manager.Exception.ResourceNotFoundException;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.entity.WorkGroup;

@@ -1,7 +1,7 @@
 package com.incident_manager.service;
 
-import com.incident_manager.Exeption.BadRequestException;
-import com.incident_manager.Exeption.ResourceNotFoundException;
+import com.incident_manager.Exception.BadRequestException;
+import com.incident_manager.Exception.ResourceNotFoundException;
 import com.incident_manager.entity.*;
 import com.incident_manager.repository.AuthUserRepository;
 import com.incident_manager.repository.TicketRepository;

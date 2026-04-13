@@ -1,8 +1,8 @@
 package com.incident_manager.service;
 
-import com.incident_manager.Exeption.BadRequestException;
-import com.incident_manager.Exeption.ConflictException;
-import com.incident_manager.Exeption.ResourceNotFoundException;
+import com.incident_manager.Exception.BadRequestException;
+import com.incident_manager.Exception.ConflictException;
+import com.incident_manager.Exception.ResourceNotFoundException;
 import com.incident_manager.entity.AuthUser;
 import com.incident_manager.entity.UserProfile;
 import com.incident_manager.entity.WorkGroup;
@@ -11,7 +11,6 @@ import com.incident_manager.repository.WorkGroupRepository;
 
 import com.incident_manager.service.command.CreateWorkGroupCommand;
 import com.incident_manager.service.command.UpdateWorkGroupCommand;
-import com.incident_manager.service.data.WorkGroupFullData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -150,13 +149,4 @@ public class WorkGroupService {
 
         return group;
     }
-
-//    public WorkGroupFullData getGroupFullData(UUID groupId) {
-//        WorkGroup group = getGroup(groupId);
-//        Set<AuthUser> groupUsers = getGroupUsers(groupId);
-//        List<AuthUser> availableUsers = getAvailableUsers(groupId);
-//
-//        return new WorkGroupFullData(group, groupUsers, availableUsers);
-//    }
-
 }

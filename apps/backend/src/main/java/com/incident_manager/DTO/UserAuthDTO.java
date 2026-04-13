@@ -1,4 +1,12 @@
 package com.incident_manager.DTO;
 
-public record UserAuthDTO(String email, String securityRol) {
-}
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record UserAuthDTO(
+    @NotBlank
+    @Email
+    String email,
+
+    String securityRole
+) {}

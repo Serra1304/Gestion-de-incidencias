@@ -47,7 +47,8 @@ public class TicketController {
                 .body(response);
     }
 
-    @GetMapping ResponseEntity<List<TicketResponseDTO>> getAllTicket () {
+    @GetMapping
+    public ResponseEntity<List<TicketResponseDTO>> getAllTicket () {
         List<Ticket> tickets = ticketService.listTickets();
 
         return ResponseEntity.ok(tickets
@@ -57,11 +58,11 @@ public class TicketController {
         );
     }
 
-    @GetMapping
+    @GetMapping(value = "/{ticketId}")
     public ResponseEntity<TicketResponseDTO> getTicket (
-            @PathVariable UUID id
+            @PathVariable UUID ticketId
             ) {
-        Ticket ticket = ticketService.getTicket(id);
+        Ticket ticket = ticketService.getTicket(ticketId);
 
         return ResponseEntity
                 .ok(ticketMapper.toTicketResponseDTO(ticket));

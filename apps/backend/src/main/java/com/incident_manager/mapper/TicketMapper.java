@@ -40,9 +40,9 @@ public class TicketMapper {
         UserSummaryDTO reporter =
                 new UserSummaryDTO(
                         ticket.getReporter().getId(),
-                        ticket.getAssignee().getProfile().getName(),
-                        ticket.getAssignee().getProfile().getLastName(),
-                        ticket.getAssignee().getProfile().getSecondLastName()
+                        ticket.getReporter().getProfile().getName(),
+                        ticket.getReporter().getProfile().getLastName(),
+                        ticket.getReporter().getProfile().getSecondLastName()
                 );
 
         UserSummaryDTO assignee = null;

@@ -11,5 +11,5 @@ public record WorkGroupFullDTO(
         String description,
         Boolean active,
         List<UserSummaryDTO> users,
-        List<UserSummaryDTO>availableUsers
+        List<UserSummaryDTO> availableUsers
 ) {}

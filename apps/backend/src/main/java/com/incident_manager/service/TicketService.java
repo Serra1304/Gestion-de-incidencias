@@ -15,6 +15,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Application service responsible for managing incident tickets.
+ *
+ * <p>This service coordinates the creation, update, retrieval and deletion of tickets,
+ * handling ticket lifecycle, status transitions, and user assignments.
+ *
+ * <p>Main responsibilities:
+ * <ul>
+ *   <li>Enforce business rules (valid status transitions, assignee group membership)</li>
+ *   <li>Handle ticket creation with reporter and assignee tracking</li>
+ *   <li>Manage transactional consistency for ticket operations</li>
+ * </ul>
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,6 +37,24 @@ public class TicketService {
     private final WorkGroupRepository workGroupRepository;
     private final TicketRepository ticketRepository;
 
+    /**
+     * Creates a new incident ticket.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Reporter email must exist</li>
+     *   <li>Work group must exist</li>
+     *   <li>If assigned, assignee must belong to the specified work group</li>
+     *   <li>Ticket is created with OPEN status</li>
+     * </ul>
+     *
+     * @param cmd command containing ticket data
+     * @param reporterEmail email of the user reporting the ticket
+     * @return persisted {@link Ticket}
+     *
+     * @throws ResourceNotFoundException if reporter or work group does not exist
+     * @throws BadRequestException if assignee does not belong to the work group
+     */
     /* CREATE */
 
     public Ticket create(CreateTicketCommand cmd, String reporterEmail) {
@@ -50,6 +81,22 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Updates an existing ticket.
+     *
+     * <p>Only non-null fields in the command are applied.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>If assignee is updated, must belong to the ticket's work group</li>
+     * </ul>
+     *
+     * @param cmd command containing fields to update
+     * @return updated {@link Ticket}
+     *
+     * @throws ResourceNotFoundException if the ticket does not exist
+     * @throws BadRequestException if new assignee does not belong to the work group
+     */
     /* UPDATE */
 
     public Ticket update(UpdateTicketCommand cmd) {
@@ -76,6 +123,22 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Changes the status of a ticket.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Closed tickets cannot change status</li>
+     *   <li>Status cannot change to its current value</li>
+     * </ul>
+     *
+     * @param ticketId ticket identifier
+     * @param status new status
+     * @return updated {@link Ticket}
+     *
+     * @throws ResourceNotFoundException if the ticket does not exist
+     * @throws BadRequestException if status transition is invalid
+     */
     /* STATUS */
 
     public Ticket changeStatus(UUID ticketId, TicketStatus status) {
@@ -89,6 +152,21 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Assigns or reassigns a ticket to a user.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Assignee must belong to the ticket's work group</li>
+     * </ul>
+     *
+     * @param ticketId ticket identifier
+     * @param userId user identifier
+     * @return updated {@link Ticket}
+     *
+     * @throws ResourceNotFoundException if ticket or user does not exist
+     * @throws BadRequestException if user does not belong to the work group
+     */
     /* ASSIGNMENT */
 
     public Ticket assignTicket(UUID ticketId, UUID userId) {
@@ -103,6 +181,13 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+    /**
+     * Deletes a ticket by id.
+     *
+     * @param ticketId ticket identifier
+     *
+     * @throws ResourceNotFoundException if the ticket does not exist
+     */
     /* DELETE */
 
     public void deleteTicket(UUID ticketId) {
@@ -110,6 +195,14 @@ public class TicketService {
         ticketRepository.delete(ticket);
     }
 
+    /**
+     * Retrieves a ticket by its identifier.
+     *
+     * @param ticketId ticket identifier
+     * @return {@link Ticket}
+     *
+     * @throws ResourceNotFoundException if the ticket does not exist
+     */
     /* QUERIES */
 
     @Transactional(readOnly = true)
@@ -119,11 +212,32 @@ public class TicketService {
                         new ResourceNotFoundException("Ticket not found"));
     }
 
+    /**
+     * Retrieves all tickets in the system.
+     *
+     * @return list of {@link Ticket}
+     */
     @Transactional(readOnly = true)
     public List<Ticket> listTickets() {
         return ticketRepository.findAll();
     }
 
+    /**
+     * Resolves the assignee for a ticket within a work group.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>If assigneeId is null, returns null (unassigned)</li>
+     *   <li>Assignee must belong to the specified work group</li>
+     * </ul>
+     *
+     * @param assigneeId user identifier or null
+     * @param group work group where user must belong
+     * @return {@link AuthUser} or null if assigneeId is null
+     *
+     * @throws ResourceNotFoundException if user does not exist
+     * @throws BadRequestException if user does not belong to the work group
+     */
     /* PRIVATE HELPERS */
 
     private AuthUser resolveAssignee(UUID assigneeId, WorkGroup group) {
@@ -142,6 +256,20 @@ public class TicketService {
         return assignee;
     }
 
+    /**
+     * Validates a ticket status transition.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Closed tickets cannot change status</li>
+     *   <li>Status cannot remain the same</li>
+     * </ul>
+     *
+     * @param current current ticket status
+     * @param next desired ticket status
+     *
+     * @throws BadRequestException if transition is invalid
+     */
     private void validateStatusTransition(
             TicketStatus current,
             TicketStatus next) {

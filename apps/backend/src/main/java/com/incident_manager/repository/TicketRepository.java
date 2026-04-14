@@ -6,6 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
+/**
+ * Repository for managing {@link Ticket} entities.
+ *
+ * <p>Provides database access methods for incident tickets.
+ */
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, UUID> {
 }

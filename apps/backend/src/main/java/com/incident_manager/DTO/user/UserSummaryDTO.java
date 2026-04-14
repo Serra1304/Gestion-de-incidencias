@@ -4,6 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for user summary information.
+ *
+ * <p>Contains only basic identification information for users.
+ * Used in listings and as part of larger data structures.
+ */
 @Schema(
         name = "UserSummary",
         description = "Basic user information returned in user listings"

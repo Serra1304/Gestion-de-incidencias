@@ -10,6 +10,24 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Represents a comment on a ticket.
+ *
+ * <p>Comments allow users to add notes and discussions to tickets.
+ * Comments can be marked as internal (visible only to staff) or public (visible to all).
+ *
+ * <p>Key relationships:
+ * <ul>
+ *   <li>Many-to-one with {@link Ticket}</li>
+ *   <li>Many-to-one with {@link AuthUser} (author)</li>
+ * </ul>
+ *
+ * <p>Audit information:
+ * <ul>
+ *   <li>createdAt: timestamp when the comment was created</li>
+ *   <li>updatedAt: timestamp of the last modification</li>
+ * </ul>
+ */
 @Entity
 @EntityListeners(TimestampListener.class)
 @Table(name = "ticket_comment")

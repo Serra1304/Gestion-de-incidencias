@@ -8,6 +8,12 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for user update request.
+ *
+ * <p>Used to update an existing user. All fields are optional.
+ * Only provided (non-null) fields will be updated in the user profile.
+ */
 @Schema(
         name = "UserUpdateRequest",
         description = "Request payload to update an existing user. Only provided fields will be updated."

@@ -12,9 +12,25 @@ import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
+/**
+ * Mapper component for converting between Ticket entities and DTOs.
+ *
+ * <p>Handles conversion between:
+ * <ul>
+ *   <li>TicketCreateDTO ↔ CreateTicketCommand</li>
+ *   <li>TicketUpdateDTO ↔ UpdateTicketCommand</li>
+ *   <li>Ticket entity ↔ TicketResponseDTO</li>
+ * </ul>
+ */
 @Component
 public class TicketMapper {
 
+    /**
+     * Converts a TicketCreateDTO to a CreateTicketCommand.
+     *
+     * @param dto the TicketCreateDTO with ticket creation data
+     * @return CreateTicketCommand ready for service layer processing
+     */
     public CreateTicketCommand toCreateTicketCommand(TicketCreateDTO dto) {
         return new CreateTicketCommand(
                 dto.title(),
@@ -25,6 +41,13 @@ public class TicketMapper {
         );
     }
 
+    /**
+     * Converts a TicketUpdateDTO to an UpdateTicketCommand.
+     *
+     * @param ticketId the ticket identifier
+     * @param dto the TicketUpdateDTO with fields to update
+     * @return UpdateTicketCommand ready for service layer processing
+     */
     public UpdateTicketCommand toUpdateTicketCommand(UUID ticketId, TicketUpdateDTO dto) {
         return new UpdateTicketCommand(
                 ticketId,
@@ -35,6 +58,15 @@ public class TicketMapper {
         );
     }
 
+    /**
+     * Converts a Ticket entity to a TicketResponseDTO.
+     *
+     * <p>Includes complete ticket information including reporter, assignee, work group,
+     * status, priority and timestamps.
+     *
+     * @param ticket the Ticket entity
+     * @return TicketResponseDTO with complete ticket information
+     */
     public TicketResponseDTO toTicketResponseDTO(Ticket ticket) {
 
         UserSummaryDTO reporter =

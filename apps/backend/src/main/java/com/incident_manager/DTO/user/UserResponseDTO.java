@@ -6,6 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for user response.
+ *
+ * <p>Complete user information returned by API endpoints when retrieving user details.
+ * Includes profile information, authentication details, and group assignments.
+ */
 @Schema(
         name = "UserResponse",
         description = "User data returned by the API"

@@ -8,6 +8,12 @@ import com.incident_manager.entity.TicketStatus;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for ticket response.
+ *
+ * <p>Complete ticket information returned by API endpoints.
+ * Includes ticket details, users involved, work group, and timestamps.
+ */
 public record TicketResponseDTO(
 
         UUID id,

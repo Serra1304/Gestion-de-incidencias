@@ -13,9 +13,28 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Mapper component for converting between UserProfile entities and DTOs.
+ *
+ * <p>Handles conversion between:
+ * <ul>
+ *   <li>UserProfile entity ↔ UserSummaryDTO</li>
+ *   <li>UserProfile entity ↔ UserResponseDTO</li>
+ *   <li>UserCreateDTO ↔ CreateUserCommand</li>
+ *   <li>UserUpdateDTO ↔ UpdateUserCommand</li>
+ * </ul>
+ */
 @Component
 public class UserMapper {
 
+    /**
+     * Converts a UserProfile entity to a UserSummaryDTO.
+     *
+     * <p>Extracts only the user's identification information (id, name, lastName, secondLastName).
+     *
+     * @param user the UserProfile entity
+     * @return UserSummaryDTO with user identification data
+     */
     public UserSummaryDTO toUserSummaryDTO(UserProfile user) {
         return new UserSummaryDTO(
                 user.getId(),
@@ -25,6 +44,14 @@ public class UserMapper {
         );
     }
 
+    /**
+     * Converts a UserProfile entity to a UserResponseDTO.
+     *
+     * <p>Includes all user details including profile information, authentication data, and group assignments.
+     *
+     * @param user the UserProfile entity
+     * @return UserResponseDTO with complete user information
+     */
     public UserResponseDTO toUserResponseDTO(UserProfile user) {
         List<WorkGroupInfoDTO> groups = user.getAuthUser().getGroups()
                 .stream()
@@ -51,6 +78,12 @@ public class UserMapper {
         );
     }
 
+    /**
+     * Converts a UserCreateDTO to a CreateUserCommand.
+     *
+     * @param user the UserCreateDTO with user creation data
+     * @return CreateUserCommand ready for service layer processing
+     */
     public CreateUserCommand toCreateUserCommand(UserCreateDTO user) {
         return new CreateUserCommand(
                 user.name(),
@@ -71,6 +104,13 @@ public class UserMapper {
         );
     }
 
+    /**
+     * Converts a UserUpdateDTO to an UpdateUserCommand.
+     *
+     * @param id the user identifier
+     * @param user the UserUpdateDTO with fields to update
+     * @return UpdateUserCommand ready for service layer processing
+     */
     public UpdateUserCommand toUpdateUserCommand(UUID id, UserUpdateDTO user) {
         return new UpdateUserCommand(
                 id,

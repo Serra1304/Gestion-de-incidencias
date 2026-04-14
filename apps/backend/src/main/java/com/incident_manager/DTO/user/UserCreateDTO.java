@@ -6,6 +6,12 @@ import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for user creation request.
+ *
+ * <p>Contains all required and optional information for creating a new user in the system.
+ * Includes personal information, contact details, authentication credentials, and group assignments.
+ */
 @Schema(
         name = "UserCreateRequest",
         description = "Request payload to create a new user in the system"

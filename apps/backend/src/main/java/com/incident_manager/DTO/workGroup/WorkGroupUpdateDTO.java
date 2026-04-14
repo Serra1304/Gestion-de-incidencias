@@ -6,6 +6,12 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Data Transfer Object for work group update request.
+ *
+ * <p>Used to update an existing work group. All fields are optional.
+ * Only provided (non-null) fields will be updated.
+ */
 public record WorkGroupUpdateDTO(
 
         @Schema(

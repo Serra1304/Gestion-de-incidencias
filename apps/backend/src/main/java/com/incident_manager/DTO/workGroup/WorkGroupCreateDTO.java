@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Data Transfer Object for work group creation request.
+ */
 @Schema(
         name = "WorkGroupCreateRequest",
         description = "Request payload to create a new work group"

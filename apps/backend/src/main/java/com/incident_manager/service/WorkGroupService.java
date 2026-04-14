@@ -20,6 +20,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Application service responsible for managing work groups.
+ *
+ * <p>This service coordinates the creation, update, retrieval and deletion of work groups,
+ * handling both group data and user assignments.
+ *
+ * <p>Main responsibilities:
+ * <ul>
+ *   <li>Enforce business rules (group name uniqueness, user existence)</li>
+ *   <li>Handle user assignment and removal from groups</li>
+ *   <li>Manage transactional consistency for group operations</li>
+ * </ul>
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -30,8 +43,14 @@ public class WorkGroupService {
     /**
      * Creates a new work group in the system.
      *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Group name must be unique (case-insensitive)</li>
+     * </ul>
+     *
      * @param cmd command containing group data
-     * @return persisted WorkGroup
+     * @return persisted {@link WorkGroup}
+     *
      * @throws ConflictException if a group with the same name already exists
      */
     public WorkGroup createGroup(CreateWorkGroupCommand cmd) {
@@ -48,6 +67,16 @@ public class WorkGroupService {
         return groupRepository.save(group);
     }
 
+    /**
+     * Updates an existing work group.
+     *
+     * <p>Only non-null fields in the command are applied.
+     *
+     * @param cmd command containing fields to update
+     * @return updated {@link WorkGroup}
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     */
     public WorkGroup updateGroup(UpdateWorkGroupCommand cmd) {
         WorkGroup group = groupRepository.findById(cmd.groupId())
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -67,10 +96,33 @@ public class WorkGroupService {
         return group;
     }
 
+    /**
+     * Deletes a work group by id.
+     *
+     * @param id work group identifier
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     */
     public void deleteGroup(UUID id) {
         groupRepository.deleteById(id);
     }
 
+    /**
+     * Adds a user to a work group.
+     *
+     * <p>Business rules:
+     * <ul>
+     *   <li>Both group and user must exist</li>
+     *   <li>User must not already be assigned to the group</li>
+     * </ul>
+     *
+     * @param groupId work group identifier
+     * @param userId user identifier
+     * @return updated {@link WorkGroup}
+     *
+     * @throws ResourceNotFoundException if group or user does not exist
+     * @throws ConflictException if user is already assigned to the group
+     */
     public WorkGroup assignUser(UUID groupId, UUID userId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -86,6 +138,16 @@ public class WorkGroupService {
         return groupRepository.save(group);
     }
 
+    /**
+     * Removes a user from a work group.
+     *
+     * @param groupId work group identifier
+     * @param userId user identifier
+     * @return updated {@link WorkGroup}
+     *
+     * @throws ResourceNotFoundException if group or user does not exist
+     * @throws BadRequestException if user is not part of the group
+     */
     public WorkGroup removeUser(UUID groupId, UUID userId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -101,15 +163,36 @@ public class WorkGroupService {
         return groupRepository.save(group);
     }
 
+    /**
+     * Retrieves a work group by its identifier.
+     *
+     * @param id work group identifier
+     * @return {@link WorkGroup}
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     */
     public WorkGroup getGroup(UUID id) {
         return groupRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
     }
 
+    /**
+     * Retrieves all work groups in the system.
+     *
+     * @return list of {@link WorkGroup}
+     */
     public List<WorkGroup> listGroups() {
         return groupRepository.findAll();
     }
 
+    /**
+     * Retrieves all users that belong to a work group.
+     *
+     * @param groupId work group identifier
+     * @return list of {@link UserProfile} belonging to the group
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     */
     public List<UserProfile> getGroupUsers(UUID groupId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -121,6 +204,14 @@ public class WorkGroupService {
                 .toList();
     }
 
+    /**
+     * Retrieves all users that do not belong to a work group.
+     *
+     * @param groupId work group identifier
+     * @return list of {@link UserProfile} not assigned to the group
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     */
     public List<UserProfile> getAvailableUsers(UUID groupId) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));
@@ -134,6 +225,16 @@ public class WorkGroupService {
                 .toList();
     }
 
+    /**
+     * Replaces the entire list of users for a work group.
+     *
+     * @param groupId work group identifier
+     * @param userIds list of user identifiers to be assigned to the group
+     * @return updated {@link WorkGroup}
+     *
+     * @throws ResourceNotFoundException if the group does not exist
+     * @throws BadRequestException if any provided user does not exist
+     */
     public WorkGroup updateGroupUsers(UUID groupId, List<UUID> userIds) {
         WorkGroup group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new ResourceNotFoundException("Group not found"));

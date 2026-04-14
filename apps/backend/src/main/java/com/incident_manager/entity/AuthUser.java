@@ -12,6 +12,26 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+/**
+ * Represents a user in the authentication and authorization system.
+ *
+ * <p>This entity stores authentication credentials and security information.
+ * User profile details are stored separately in {@link UserProfile}.
+ *
+ * <p>Key relationships:
+ * <ul>
+ *   <li>One-to-one with {@link UserProfile}</li>
+ *   <li>Many-to-many with {@link WorkGroup}</li>
+ * </ul>
+ *
+ * <p>Email must be unique in the system and is used for login.
+ *
+ * <p>Audit information:
+ * <ul>
+ *   <li>createdAt: timestamp when the user was created</li>
+ *   <li>updatedAt: timestamp of the last modification</li>
+ * </ul>
+ */
 @Entity
 @EntityListeners(TimestampListener.class)
 @Getter @Setter

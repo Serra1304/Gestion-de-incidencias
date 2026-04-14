@@ -9,6 +9,18 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+/**
+ * Represents an invalidated JWT token.
+ *
+ * <p>This entity is used to maintain a blacklist of tokens that have been invalidated
+ * during logout operations. When a user logs out, their token is added to this blacklist
+ * to prevent its further use.
+ *
+ * <p>Audit information:
+ * <ul>
+ *   <li>createdAt: timestamp when the token was invalidated</li>
+ * </ul>
+ */
 @Entity
 @Getter @Setter
 @NoArgsConstructor

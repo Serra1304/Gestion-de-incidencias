@@ -2,6 +2,7 @@ package com.incident_manager;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * Main application entry point for the Incident Manager system.
@@ -16,9 +17,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *   <li>User and work group administration</li>
  *   <li>Audit trail with timestamps</li>
  *   <li>RESTful API with OpenAPI/Swagger documentation</li>
+ *   <li>Notification system for email and in-app alerts</li>
  * </ul>
  */
 @SpringBootApplication
+@EnableAsync
 public class IncidentManager {
 
 	/**

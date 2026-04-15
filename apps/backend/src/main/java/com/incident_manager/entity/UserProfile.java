@@ -54,11 +54,15 @@ public class UserProfile implements Auditable {
     private String phoneBusiness;
     private String phoneExtension;
 
+    @Column(name = "email_notifications_enabled", nullable = false)
+    private Boolean emailNotificationsEnabled = true;
+
+    @Column(name = "in_app_notifications_enabled", nullable = false)
+    private Boolean inAppNotificationsEnabled = true;
+
     @Column(name = "created_at", insertable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", insertable = false, updatable = false)
     private LocalDateTime updatedAt;
 }
-
-

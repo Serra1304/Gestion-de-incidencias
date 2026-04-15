@@ -26,6 +26,7 @@ import java.util.UUID;
  *   <li>Enforce business rules (valid status transitions, assignee group membership)</li>
  *   <li>Handle ticket creation with reporter and assignee tracking</li>
  *   <li>Manage transactional consistency for ticket operations</li>
+ *   <li>Send notifications for ticket events</li>
  * </ul>
  */
 @Service
@@ -36,6 +37,7 @@ public class TicketService {
     private final AuthUserRepository userRepository;
     private final WorkGroupRepository workGroupRepository;
     private final TicketRepository ticketRepository;
+    private final NotificationService notificationService;
 
     /**
      * Creates a new incident ticket.
@@ -78,7 +80,11 @@ public class TicketService {
         ticket.setWorkGroup(workGroup);
         ticket.setStatus(TicketStatus.OPEN);
 
-        return ticketRepository.save(ticket);
+        Ticket savedTicket = ticketRepository.save(ticket);
+
+        notificationService.notifyTicketCreated(savedTicket);
+
+        return savedTicket;
     }
 
     /**
@@ -120,7 +126,11 @@ public class TicketService {
             ticket.setAssignee(assignee);
         }
 
-        return ticketRepository.save(ticket);
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        notificationService.notifyTicketUpdated(updatedTicket);
+
+        return updatedTicket;
     }
 
     /**
@@ -149,7 +159,11 @@ public class TicketService {
 
         ticket.setStatus(status);
 
-        return ticketRepository.save(ticket);
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        notificationService.notifyTicketStatusChanged(updatedTicket);
+
+        return updatedTicket;
     }
 
     /**
@@ -178,7 +192,11 @@ public class TicketService {
 
         ticket.setAssignee(assignee);
 
-        return ticketRepository.save(ticket);
+        Ticket updatedTicket = ticketRepository.save(ticket);
+
+        notificationService.notifyTicketAssigned(updatedTicket);
+
+        return updatedTicket;
     }
 
     /**
